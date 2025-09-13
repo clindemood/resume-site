@@ -2,69 +2,69 @@
   "achievements": [],
   "certifications": [
     {
-      "id": 1,
-      "name": "Cisco Certified Network Associate",
-      "issuer": "Cisco",
-      "issued": "2025-09",
+      "credential_id": "275797448",
       "expires": "2028-09",
-      "credential_id": "275797448"
+      "id": 1,
+      "issued": "2025-09",
+      "issuer": "Cisco",
+      "name": "Cisco Certified Network Associate"
     },
     {
       "id": 2,
-      "name": "AZ-104: Microsoft Azure Administrator Associate",
+      "issued": "2023-06",
       "issuer": "Microsoft",
-      "issued": "2023-06"
+      "name": "AZ-104: Microsoft Azure Administrator Associate"
     },
     {
+      "expires": "2026-05",
       "id": 3,
-      "name": "AWS Certified Cloud Practitioner",
-      "issuer": "Amazon Web Services (AWS)",
       "issued": "2023-05",
-      "expires": "2026-05"
+      "issuer": "Amazon Web Services (AWS)",
+      "name": "AWS Certified Cloud Practitioner"
     },
     {
-      "id": 4,
-      "name": "CompTIA Network+ N10-008",
-      "issuer": "CompTIA",
-      "issued": "2022-12",
+      "credential_id": "438017330",
       "expires": "2025-12",
-      "credential_id": "438017330"
+      "id": 4,
+      "issued": "2022-12",
+      "issuer": "CompTIA",
+      "name": "CompTIA Network+ N10-008"
     },
     {
-      "id": 5,
-      "name": "CompTIA Security+ SY0-601",
-      "issuer": "CompTIA",
-      "issued": "2022-11",
+      "credential_id": "435440541",
       "expires": "2025-11",
-      "credential_id": "435440541"
-    },
-    {
-      "id": 6,
-      "name": "CompTIA A+ (220-1101 + 220-1102)",
+      "id": 5,
+      "issued": "2022-11",
       "issuer": "CompTIA",
-      "issued": "2023-01",
-      "expires": "2026-01",
-      "credential_id": "439456615"
+      "name": "CompTIA Security+ SY0-601"
     },
     {
-      "id": 7,
-      "name": "SC-900: Microsoft Security, Compliance, and Identity Fundamentals",
-      "issuer": "Microsoft",
+      "credential_id": "439456615",
+      "expires": "2026-01",
+      "id": 6,
       "issued": "2023-01",
-      "credential_id": "I588-5933"
+      "issuer": "CompTIA",
+      "name": "CompTIA A+ (220-1101 + 220-1102)"
+    },
+    {
+      "credential_id": "I588-5933",
+      "id": 7,
+      "issued": "2023-01",
+      "issuer": "Microsoft",
+      "name": "SC-900: Microsoft Security, Compliance, and Identity Fundamentals"
     },
     {
       "id": 8,
-      "name": "Azure Data Fundamentals (DP-900)",
+      "issued": "2023-05",
       "issuer": "Microsoft",
-      "issued": "2023-05"
+      "name": "Azure Data Fundamentals (DP-900)"
     },
     {
+      "credential_id": "GR671423316CL",
       "id": 9,
-      "name": "ITIL\u00ae Foundation 4 Certificate in IT Service Management",
-      "issuer": "PeopleCert",
       "issued": "2022-08",
-      "credential_id": "GR671423316CL"
+      "issuer": "PeopleCert",
+      "name": "ITIL® Foundation 4 Certificate in IT Service Management"
     }
   ],
   "education": [
@@ -213,89 +213,134 @@
   },
   "overview": {
     "email": "chad.lindemood@gmail.com",
+    "github": "https://github.com/clindemood",
     "linkedin": "https://linkedin.com/in/chadlindemood/",
     "location": "Canal Fulton, OH",
     "name": "Chad Lindemood",
     "summary": "IT professional focused on building secure, reliable, and scalable systems across cloud, network, and endpoint environments. Experienced in tackling complex technical challenges, leading projects from start to finish, and strengthening infrastructure through hands-on expertise and industry certifications.",
     "title": "Tier 2 Escalations Technician",
-    "web": "https://chadlindemood.com",
-    "github": "https://github.com/clindemood"
+    "web": "https://chadlindemood.com"
   },
   "projects": [
     {
-      "id": 6,
-      "name": "Advanced Cisco Enterprise Network Lab",
-      "start": "2025-09",
+      "bullets": [
+        "Created an interactive lab using AI tools to build a resume-focused website.",
+        "Containerized the application with Docker and orchestrated it using Kubernetes.",
+        "Deployed the site to AWS for public access and scalability testing.",
+        "This is that website!"
+      ],
+      "id": 7,
+      "name": "Resume Creation Lab",
       "role": "Author",
+      "start": "2025-09",
+      "tech": [
+        "AI tools",
+        "Docker",
+        "Kubernetes",
+        "AWS"
+      ]
+    },
+    {
       "bullets": [
         "Built an advanced EVE-NG topology simulating a branch office network.",
         "Configured dynamic routing with OSPF, inter-VLAN routing, and port security.",
         "Implemented SNMP monitoring and Syslog forwarding.",
         "Validated resiliency by simulating link failures and verifying failover."
       ],
-      "tech": ["EVE-NG", "OSPF", "SNMP"]
+      "id": 6,
+      "name": "Advanced Cisco Enterprise Network Lab",
+      "role": "Author",
+      "start": "2025-09",
+      "tech": [
+        "EVE-NG",
+        "OSPF",
+        "SNMP"
+      ]
     },
     {
-      "id": 5,
-      "name": "Network Automation and Monitoring Project",
-      "start": "2024-01",
-      "role": "Author",
       "bullets": [
         "Built a small lab with Cisco IOSv routers in EVE-NG.",
         "Used Python and Ansible playbooks to push standardized configs across devices.",
         "Enabled SNMP and Syslog exports to a central monitoring server.",
         "Created dashboards in Grafana to visualize uptime, interface errors, and CPU utilization."
       ],
-      "tech": ["EVE-NG", "Cisco IOSv", "Ansible", "Grafana"]
+      "id": 5,
+      "name": "Network Automation and Monitoring Project",
+      "role": "Author",
+      "start": "2024-01",
+      "tech": [
+        "EVE-NG",
+        "Cisco IOSv",
+        "Ansible",
+        "Grafana"
+      ]
     },
     {
-      "id": 4,
-      "name": "Firewall and Intrusion Detection Lab",
-      "start": "2023-06",
-      "role": "Author",
       "bullets": [
         "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.",
         "Configured stateful firewall rules, VLAN segmentation, and port forwarding.",
         "Integrated Suricata IDS to monitor for malicious traffic patterns.",
         "Tested security by running controlled nmap scans and logging alerts."
       ],
-      "tech": ["pfSense", "Suricata", "nmap"]
+      "id": 4,
+      "name": "Firewall and Intrusion Detection Lab",
+      "role": "Author",
+      "start": "2023-06",
+      "tech": [
+        "pfSense",
+        "Suricata",
+        "nmap"
+      ]
     },
     {
-      "id": 3,
-      "name": "Cloud Foundations Deployment",
-      "start": "2023-05",
-      "role": "Author",
       "bullets": [
         "Deployed a small website to both AWS EC2 and Azure App Services.",
         "Configured IAM and RBAC roles for secure access management.",
         "Used S3 and Azure Storage to host static content and compared performance."
       ],
-      "tech": ["AWS", "Azure", "IAM", "RBAC"]
+      "id": 3,
+      "name": "Cloud Foundations Deployment",
+      "role": "Author",
+      "start": "2023-05",
+      "tech": [
+        "AWS",
+        "Azure",
+        "IAM",
+        "RBAC"
+      ]
     },
     {
-      "id": 2,
-      "name": "Active Directory & Endpoint Management Lab",
-      "start": "2023-01",
-      "role": "Author",
       "bullets": [
         "Set up a Windows Server VM running Active Directory Domain Services.",
         "Joined Windows 10 clients to the domain, created user accounts, and tested Group Policies.",
         "Integrated an Azure AD trial tenant for hybrid identity experiments."
       ],
-      "tech": ["Windows Server", "Active Directory", "Azure AD"]
+      "id": 2,
+      "name": "Active Directory & Endpoint Management Lab",
+      "role": "Author",
+      "start": "2023-01",
+      "tech": [
+        "Windows Server",
+        "Active Directory",
+        "Azure AD"
+      ]
     },
     {
-      "id": 1,
-      "name": "Basic Secure Network Lab",
-      "start": "2022-11",
-      "role": "Author",
       "bullets": [
         "Built a small Packet Tracer lab with 2 routers, 2 switches, and multiple VLANs.",
         "Configured static routing, DHCP, NAT, and ACLs to restrict traffic between VLANs.",
         "Documented a basic network topology and simulated external internet access."
       ],
-      "tech": ["Packet Tracer", "DHCP", "NAT", "ACLs"]
+      "id": 1,
+      "name": "Basic Secure Network Lab",
+      "role": "Author",
+      "start": "2022-11",
+      "tech": [
+        "Packet Tracer",
+        "DHCP",
+        "NAT",
+        "ACLs"
+      ]
     }
   ],
   "service": [],
