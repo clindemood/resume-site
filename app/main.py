@@ -67,6 +67,11 @@ def education() -> FileResponse:
 def about() -> FileResponse:
     return FileResponse(STATIC_DIR / "about.html")
 
+
+@app.get("/resume", response_class=FileResponse)
+def resume() -> FileResponse:
+    return FileResponse(STATIC_DIR / "resume.html")
+
 @app.get("/api/start")
 def start():
     session_id = str(uuid.uuid4())
