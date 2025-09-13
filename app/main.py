@@ -266,6 +266,19 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         ]
         return {"text": "".join(lines)}
 
+    if command == "certifications":
+        expand = "--expand" in args
+        page = 1
+        if "--page" in args:
+            try:
+                idx = args.index("--page")
+                page = int(args[idx + 1])
+            except (ValueError, IndexError):
+                pass
+        text = list_section(state, "certifications", expand=expand, page=page)
+        state.setdefault("history", []).append(cmd)
+        return {"text": text}
+
     if command == "skills":
         level = None
         tags: List[str] | None = None
@@ -401,6 +414,7 @@ HELP_TEXT = (
     "  search <query> [--in <section>]      — full-text search\n"
     "  filter [section] field=value         — filter items\n"
     "  timeline                             — show experience timeline\n"
+    "  certifications [--expand] [--page N] — list certifications\n"
     "  skills [--level L] [--tag t1,t2]     — list skills\n"
     "  contact                              — show contact info\n"
     "  copy <field>                         — copy a field\n"
@@ -421,6 +435,7 @@ COMMAND_HELP = {
     "open": "open <section> [--expand] [--page N] — show a section.",
     "show": "show <id> — open one item by its ID from the last listing. You can also type the id number directly.",
     "search": "search <query> [--in <section>] — full-text search.",
+    "certifications": "certifications [--expand] [--page N] — list certifications.",
 }
 
 # ---------------------------------------------------------------------------
