@@ -154,6 +154,14 @@
     {"id": 1, "institution": "Western Governors University", "degree": "B.S. Cloud Computing", "year": "2024"},
     {"id": 2, "institution": "ACI Learning", "degree": "Tech Bootcamp, Computer User Support Specialist Program", "year": "2022"}
   ],
+  "certifications": [
+    {"id": 1, "name": "Microsoft Azure Administrator (AZ-104)"},
+    {"id": 2, "name": "AWS Certified Cloud Practitioner"},
+    {"id": 3, "name": "CompTIA A+"},
+    {"id": 4, "name": "CompTIA Network+"},
+    {"id": 5, "name": "CompTIA Security+"},
+    {"id": 6, "name": "ITIL 4"}
+  ],
   "achievements": [],
   "service": [],
   "interests": [],

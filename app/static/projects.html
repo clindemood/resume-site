@@ -17,12 +17,14 @@
   </header>
   <main>
     <h1>Projects</h1>
-    <ul>
-      <li>Developed PowerShell scripts for device tracking and Chrome bookmark backup to streamline IT operations.</li>
-    </ul>
+    <ul id="projects-list"></ul>
     </main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script type="module">
+      import {loadProjects} from '/static/resume-data.js';
+      loadProjects();
+    </script>
   </body>
 </html>

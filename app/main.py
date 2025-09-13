@@ -133,6 +133,8 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
         return f"{item['name']} ({item.get('level')})"
     if section == "education":
         return f"{item['degree']} at {item['institution']} ({item['year']})"
+    if section == "certifications":
+        return item.get("name", "")
     return ""
 
 
@@ -421,6 +423,11 @@ def about() -> FileResponse:
 @app.get("/resume", response_class=FileResponse)
 def resume() -> FileResponse:
     return FileResponse(STATIC_DIR / "resume.html")
+
+
+@app.get("/api/resume")
+def get_resume() -> Dict[str, Any]:
+    return RESUME
 
 
 @app.get("/api/start")

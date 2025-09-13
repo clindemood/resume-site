@@ -15,99 +15,13 @@
       <a href="/about">About</a>
     </nav>
   </header>
-  <main>
-    <h1>Chad Lindemood</h1>
-    <p>Canal Fulton, OH | (765) 470-3525 | <a href="mailto:chad.lindemood@gmail.com">chad.lindemood@gmail.com</a></p>
-
-    <h2>Professional Experience</h2>
-    <h3>Tier 2 Escalations Technician &ndash; Computer Technology Managed Services</h3>
-    <p>Dec 2024 &ndash; Present | Akron, OH</p>
-    <ul>
-      <li>Resolved advanced escalations from Tier 1 helpdesk across multiple clients, handling complex networking, system, and endpoint issues.</li>
-      <li>Directed client onboarding projects end-to-end, from requirements gathering through deployment, ensuring seamless transitions.</li>
-      <li>Completed infrastructure upgrades and troubleshooting during multi-day onsite engagements under strict deadlines.</li>
-      <li>Configured, secured, and troubleshot SonicWall and Sophos firewalls to enhance client security posture.</li>
-      <li>Administered VMware ESXi environments, remediating host and VM-level failures to maintain uptime.</li>
-      <li>Diagnosed Windows Server and Active Directory issues including GPOs, authentication, and domain outages.</li>
-      <li>Reduced repeat tickets by documenting solutions, training Tier 1 staff, and standardizing recurring fixes.</li>
-    </ul>
-
-    <h3>Field Technician &ndash; Computer Technology Managed Services</h3>
-    <p>Sep 2024 &ndash; Dec 2024 | Akron, OH</p>
-    <ul>
-      <li>Delivered onsite support for desktops and laptops, replacing RAM, drives, and displays to minimize downtime.</li>
-      <li>Maintained network infrastructure by replacing switches, UniFi Cloud Keys, and UPS batteries, while reorganizing network closets for reliability.</li>
-      <li>Supported migration and onboarding projects by imaging and deploying devices for end users.</li>
-      <li>Participated in ransomware incident response, reimaging endpoints and restoring organizational productivity.</li>
-      <li>Documented troubleshooting steps and contributed to internal knowledge base for consistent team practices.</li>
-    </ul>
-
-    <h3>EXOS IT &ndash; Noblesville, IN</h3>
-    <h4>IT Service Desk Technician II | Mar 2024 &ndash; Sep 2024</h4>
-    <ul>
-      <li>Served as primary escalation point for Tier 1 staff, managing complex technical issues and mentoring new technicians.</li>
-      <li>Authored process documentation and delivered training to improve first-call resolution.</li>
-      <li>Supported server patching and monthly updates alongside the systems administrator.</li>
-      <li>Monitored and verified Veeam backups, ensuring reliability of disaster recovery.</li>
-      <li>Collaborated on Active Directory cleanup projects, removing obsolete accounts and standardizing user provisioning.</li>
-      <li>Integrated applications with Azure AD to enable Single Sign-On, reducing password management burden.</li>
-    </ul>
-    <h4>IT Service Desk Technician I | Nov 2022 &ndash; Mar 2024</h4>
-    <ul>
-      <li>Implemented Intune and Autopilot for hybrid device provisioning, creating applications and configuration profiles.</li>
-      <li>Coordinated annual PC refresh project, managing device setup, tracking progress, and recommending hardware specs.</li>
-      <li>Streamlined operations by developing PowerShell scripts for device tracking, Chrome bookmark backup, and automation tasks.</li>
-      <li>Delivered Microsoft Office Suite training and daily support for end users.</li>
-      <li>Configured Microsoft Teams Rooms with both hardware and software deployments.</li>
-      <li>Assisted networking team with VPN, switch rewiring, access points, and cabling tasks.</li>
-    </ul>
-
-    <h3>Stay-at-Home Father</h3>
-    <p>Jan 2015 &ndash; Jul 2022 | Miami, FL</p>
-    <ul>
-      <li>Applied time management, multitasking, and organizational discipline to balance competing demands.</li>
-    </ul>
-
-    <h3>Hall of Fame Flooring &ndash; Cleveland, OH</h3>
-    <h4>Flooring Installer | Jun 2012 &ndash; Dec 2014</h4>
-    <ul>
-      <li>Communicated directly with customers to ensure accurate requirements and high-quality service delivery.</li>
-    </ul>
-
-    <h3>United States Air Force &ndash; Fort Meade, MD</h3>
-    <h4>Signals Intelligence Analyst | Mar 2008 &ndash; Mar 2012</h4>
-    <ul>
-      <li>Conducted complex signal analysis with advanced technical tools.</li>
-      <li>Collaborated with teams to share intelligence and improve communication channels.</li>
-      <li>Developed expertise in data analysis and technical problem solving.</li>
-    </ul>
-
-    <h2>Education</h2>
-    <ul>
-      <li>Western Governors University &ndash; Salt Lake City, UT &mdash; Bachelor of Science, Cloud Computing (Expected Dec 2024)</li>
-      <li>ACI Learning &ndash; Centennial, CO &mdash; Tech Bootcamp, Computer User Support Specialist Program (Sep 2022)</li>
-    </ul>
-
-    <h2>Certifications</h2>
-    <ul>
-      <li>Microsoft Azure Administrator (AZ-104)</li>
-      <li>AWS Certified Cloud Practitioner</li>
-      <li>CompTIA A+</li>
-      <li>CompTIA Network+</li>
-      <li>CompTIA Security+</li>
-      <li>ITIL 4</li>
-    </ul>
-
-    <h2>Technical Skills</h2>
-    <ul>
-      <li>Cloud &amp; Systems: Azure, Active Directory, Windows Server, VMware ESXi</li>
-      <li>Endpoint Management: Microsoft Intune, Autopilot, PowerShell scripting</li>
-      <li>Networking &amp; Security: SonicWall, Sophos, VPN, UniFi, Veeam backups</li>
-      <li>Collaboration Tools: Microsoft Teams Rooms, Office Suite</li>
-    </ul>
-    </main>
+  <main id="resume-container"></main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script type="module">
+      import {loadResume} from '/static/resume-data.js';
+      loadResume();
+    </script>
   </body>
 </html>

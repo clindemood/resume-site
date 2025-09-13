@@ -17,22 +17,16 @@
   </header>
   <main>
     <h1>Education</h1>
-    <ul>
-      <li>Western Governors University &ndash; Salt Lake City, UT &mdash; Bachelor of Science, Cloud Computing (Expected Dec 2024)</li>
-      <li>ACI Learning &ndash; Centennial, CO &mdash; Tech Bootcamp, Computer User Support Specialist Program (Sep 2022)</li>
-    </ul>
+    <ul id="education-list"></ul>
     <h2>Certifications</h2>
-    <ul>
-      <li>Microsoft Azure Administrator (AZ-104)</li>
-      <li>AWS Certified Cloud Practitioner</li>
-      <li>CompTIA A+</li>
-      <li>CompTIA Network+</li>
-      <li>CompTIA Security+</li>
-      <li>ITIL 4</li>
-    </ul>
+    <ul id="certifications-list"></ul>
     </main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script type="module">
+      import {loadEducation} from '/static/resume-data.js';
+      loadEducation();
+    </script>
   </body>
 </html>
