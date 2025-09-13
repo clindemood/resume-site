@@ -301,7 +301,14 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
 
     if command == "equipment":
         eq = game.get("equipment", [])
-        return {"text": "Equipment: " + ", ".join(eq) if eq else "You carry only your wits."}
+        player_hp = game.get("player_hp", 0)
+        items = ", ".join(eq) if eq else "none"
+        stats = f"IT Nerd | HP: {player_hp} | Attack: 4-8 | Defense: 1-5"
+        return {"text": stats + "\nEquipment: " + items}
+    if command == "look" and not args:
+        return {
+            "text": "A dusky back-room buzzing with tired tech, lit by the glow of misbehaving machines."
+        }
     if command == "look" and args:
         target = args[0].lower()
         key = match_key(target, enemy_descriptions) or match_key(target, item_descriptions)
@@ -361,7 +368,10 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
                     "mdf": "Cat5 of Ninetails",
                 }[target_key]
                 game["equipment"].append(loot)
-                lines.append(f"The {target_key} blue-screens! Loot: {loot}.")
+                if target_key == "printer":
+                    lines.append(f"The printer jams one last time and erupts in a cloud of toner! Loot: {loot}.")
+                else:
+                    lines.append(f"The {target_key} blue-screens! Loot: {loot}.")
                 game["enemy_hp"][target_key] = 0
                 break
             enemy_hit = random.randint(1, 5)
@@ -418,7 +428,7 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
             }
             return {
                 "text": (
-                    "You slip into a hidden admin arena. "
+                    "You slip into a hidden admin arena, a dusky back-room buzzing with tired tech. "
                     "Targets: printer, server, MDF. "
                     "Use 'attack <target>' (or 'atk'), 'equipment' ('eq'), "
                     "'look <thing>' ('l') or 'exit' ('q') to leave."
@@ -737,19 +747,22 @@ def start() -> Dict[str, Any]:
     """Start a new CLI session."""
     session_id = str(uuid.uuid4())
     sessions[session_id] = {}
-    variants = " • ".join(RESUME.get("versions", []))
     ascii_art = r"""
-  ____                          _                 
- |  _ \ ___  ___ ___  _ __   | |_ ___  _ __     
- | |_) / _ \/ __/ _ \| '_ \  | __/ _ \| '__|    
- |  _ <  __/ (_| (_) | | | | | || (_) | |       
- |_| \_\___|\___\___/|_| |_|  \__\___/|_|       
+      ____________________
+     |  ________________  |
+     | |                | |
+     | |  Tech Terminal | |
+     | |________________| |
+     |____________________|
+      \__________________/
+        |              |
+        |______________|
 """
     text = (
         ascii_art
         + "\nWelcome to the interactive resume terminal."
         + "\nType 'help' to explore commands or 'open overview' to begin.\n"
-        + f"Last updated: {RESUME['meta']['last_updated']} | Variants: {variants}"
+        + f"Last updated: {RESUME['meta']['last_updated']}"
     )
     return {"session_id": session_id, "text": text}
 
