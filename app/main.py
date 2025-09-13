@@ -175,6 +175,50 @@ def search_resume(query: str, section: str | None = None) -> List[str]:
 # Command handlers
 # ---------------------------------------------------------------------------
 
+def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> Dict[str, Any]:
+    """Handle commands for the secret mini game."""
+
+    game = state.setdefault("secret", {"defeated": set()})
+    defeated = game.setdefault("defeated", set())
+
+    if command == "exit":
+        state.pop("mode", None)
+        return {"text": "You leave the secret admin arena."}
+
+    if command == "attack" and args:
+        target = args[0].lower()
+        if target in defeated:
+            return {"text": f"The {target} has already been defeated."}
+        if target == "printer":
+            defeated.add(target)
+            text = (
+                "You swing a spare USB cable at the printer!\n"
+                "Paper flies everywhere as it jams itself in defeat.\n"
+                "Loot: Mouse of Many Clicks."
+            )
+        elif target == "server":
+            defeated.add(target)
+            text = (
+                "With a flurry of sudo commands you assault the server!\n"
+                "Fans howl before it reboots in surrender.\n"
+                "Loot: shimmering Tech Aura."
+            )
+        elif target == "mdf":
+            defeated.add(target)
+            text = (
+                "You enter the MDF, cables whipping like furious snakes!\n"
+                "After a tangle of packets and puns, the MDF lies defeated.\n"
+                "Loot: the legendary Cat5 of Ninetails."
+            )
+        else:
+            text = "Unknown target."
+        if {"printer", "server", "mdf"} <= defeated:
+            text += "\nAll foes vanquished! You are the supreme admin."
+        return {"text": text}
+
+    return {"text": "Commands: attack printer|server|mdf, exit"}
+
+
 def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     """Return response dict for ``cmd`` executed in ``state``."""
 
@@ -184,6 +228,9 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     parts = shlex.split(cmd)
     command = parts[0]
     args = parts[1:]
+
+    if state.get("mode") == "secret":
+        return handle_secret_game(state, command, args)
 
     # Allow using just the numeric id to show an item
     if command.isdigit() and not args:
@@ -198,6 +245,16 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         return {"text": HELP_TEXT if not args else COMMAND_HELP.get(args[0], "No help available.")}
 
     if command == "open" and args:
+        if args[0] == "secret":
+            state["mode"] = "secret"
+            state["secret"] = {"defeated": set()}
+            return {
+                "text": (
+                    "You slip into a hidden admin arena. "
+                    "Targets: printer, server, MDF. "
+                    "Use 'attack <target>' or 'exit' to leave."
+                )
+            }
         section = args[0]
         expand = "--expand" in args
         page = 1
