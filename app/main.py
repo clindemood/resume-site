@@ -14,6 +14,7 @@ import json
 import random
 import shlex
 import uuid
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
@@ -31,6 +32,22 @@ DATA_PATH = APP_DIR / "resume.json"
 
 with DATA_PATH.open() as f:
     RESUME: Dict[str, Any] = json.load(f)
+
+
+def get_last_updated() -> str:
+    try:
+        return (
+            subprocess.check_output(
+                ["git", "log", "-1", "--format=%cs", str(DATA_PATH)]
+            )
+            .decode()
+            .strip()
+        )
+    except Exception:
+        return datetime.fromtimestamp(DATA_PATH.stat().st_mtime).strftime("%Y-%m-%d")
+
+
+RESUME.setdefault("meta", {})["last_updated"] = get_last_updated()
 
 STATIC_DIR = APP_DIR / "static"
 
@@ -142,7 +159,7 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
             lines.append(render_details(section, item))
     hint = " • type 'next' to see more" if page < total_pages else ""
     lines.append(
-        f"Page {page}/{total_pages} • use 'show <id>' or type the number{hint}"
+        f"Page {page}/{total_pages} • use 'show <id>' or <id>{hint}"
     )
     return "\n".join(lines)
 
