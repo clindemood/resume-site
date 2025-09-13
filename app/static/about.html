@@ -17,10 +17,14 @@
   </header>
   <main>
     <h1>About</h1>
-    <p>I'm Chad Lindemood, an IT professional specializing in cloud and systems administration, endpoint management, and network security. I enjoy translating complex technical problems into clear solutions and building resilient infrastructure for users and organizations.</p>
+    <p id="about-text"></p>
     </main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script type="module">
+      import {loadAbout} from '/static/resume-data.js';
+      loadAbout();
+    </script>
   </body>
 </html>
