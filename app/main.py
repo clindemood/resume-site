@@ -1,5 +1,3 @@
-import json
-import uuid
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -8,45 +6,9 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-# Load room data
-ROOMS_PATH = Path(__file__).parent / "rooms.json"
-with ROOMS_PATH.open() as f:
-    rooms = json.load(f)
-
-# Ensure exits are bidirectional so players can return the way they came. This
-# also makes it easier to add new rooms in the future without manually
-# specifying reverse links for every connection.
-OPPOSITES = {
-    "north": "south",
-    "south": "north",
-    "east": "west",
-    "west": "east",
-    "up": "down",
-    "down": "up",
-}
-
-for room_key, room in rooms.items():
-    for direction, target_key in list(room.get("exits", {}).items()):
-        opposite = OPPOSITES.get(direction)
-        if not opposite:
-            continue
-        target_room = rooms.get(target_key)
-        if not target_room:
-            continue
-        target_exits = target_room.setdefault("exits", {})
-        target_exits.setdefault(opposite, room_key)
-
-# Serve static files
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-# In-memory session store
-sessions: dict[str, dict] = {}
-
-def describe_room(key: str) -> str:
-    room = rooms[key]
-    exits = ", ".join(room.get("exits", {}).keys())
-    return f"{room['name']}\n{room['description']}\nExits: {exits}"
 
 @app.get("/", response_class=FileResponse)
 def index() -> FileResponse:
@@ -71,59 +33,3 @@ def about() -> FileResponse:
 @app.get("/resume", response_class=FileResponse)
 def resume() -> FileResponse:
     return FileResponse(STATIC_DIR / "resume.html")
-
-@app.get("/api/start")
-def start():
-    session_id = str(uuid.uuid4())
-    sessions[session_id] = {"current_room": "entrance", "inventory": []}
-    return {"session_id": session_id, "text": describe_room("entrance")}
-
-@app.post("/api/command")
-async def command(payload: dict):
-    session_id = payload.get("session_id")
-    cmd = payload.get("command", "").strip().lower()
-    state = sessions.get(session_id)
-    if not state:
-        return {"text": "Invalid session."}
-
-    current = state["current_room"]
-    text = ""
-
-    if cmd in {"look", "l"}:
-        text = describe_room(current)
-    elif cmd.startswith("go "):
-        direction = cmd.split(maxsplit=1)[1]
-        destination = rooms[current]["exits"].get(direction)
-        if destination:
-            state["current_room"] = destination
-            text = describe_room(destination)
-        else:
-            text = "You can't go that way."
-    elif cmd in rooms[current]["exits"]:
-        destination = rooms[current]["exits"][cmd]
-        state["current_room"] = destination
-        text = describe_room(destination)
-    elif cmd in {"n", "s", "e", "w", "u", "d"}:
-        dir_lookup = {"n": "north", "s": "south", "e": "east", "w": "west", "u": "up", "d": "down"}
-        direction = dir_lookup[cmd]
-        destination = rooms[current]["exits"].get(direction)
-        if destination:
-            state["current_room"] = destination
-            text = describe_room(destination)
-        else:
-            text = "You can't go that way."
-    elif cmd in {"inventory", "i"}:
-        inv = state["inventory"]
-        text = "You are carrying: " + (", ".join(inv) if inv else "nothing.")
-    elif cmd == "help":
-        text = "Commands: look, go <direction>, inventory, map, examine <item>"
-    elif cmd == "map":
-        text = "Rooms: " + ", ".join(room["name"] for room in rooms.values())
-    elif cmd.startswith("examine "):
-        item = cmd.split(maxsplit=1)[1]
-        text = f"You see nothing special about the {item}."
-    else:
-        text = "Unknown command."
-
-    return {"text": text}
-
