@@ -51,10 +51,7 @@ export async function loadEducation() {
   if (certList && r.certifications) {
     r.certifications.forEach(c => {
       const li = document.createElement('li');
-      const details = [];
-      if (c.issuer) details.push(c.issuer);
-      if (c.credential_id) details.push(`ID ${c.credential_id}`);
-      li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
+      li.textContent = c.name;
       certList.appendChild(li);
     });
   }

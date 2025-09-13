@@ -2,6 +2,8 @@ let sessionId; // current CLI session identifier returned by the backend
 const terminal = document.getElementById('terminal');
 const form = document.getElementById('command-form');
 const input = document.getElementById('command');
+const history = [];
+let historyIndex = -1;
 
 // Escape HTML special characters so user content cannot inject markup
 function escapeHtml(text) {
@@ -67,7 +69,30 @@ form.addEventListener('submit', e => {
   e.preventDefault();
   const cmd = input.value;
   input.value = '';
+  if (cmd) {
+    history.push(cmd);
+    historyIndex = history.length;
+  }
   sendCommand(cmd);
+});
+
+input.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') {
+    if (historyIndex > 0) {
+      historyIndex--;
+      input.value = history[historyIndex];
+    }
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      input.value = history[historyIndex];
+    } else {
+      historyIndex = history.length;
+      input.value = '';
+    }
+    e.preventDefault();
+  }
 });
 
 // Delegate clicks on the hotkey buttons to send predefined commands
