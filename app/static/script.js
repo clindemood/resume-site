@@ -29,7 +29,12 @@ function print(text, cls = 'output') {
   if (text) {
     const line = document.createElement('div');
     line.className = cls;
-    line.innerHTML = colorize(text);
+    if (cls === 'ascii') {
+      // Avoid colourisation so spacing is preserved for ASCII art
+      line.textContent = text;
+    } else {
+      line.innerHTML = colorize(text);
+    }
     terminal.appendChild(line);
   }
   terminal.scrollTop = terminal.scrollHeight;
@@ -40,6 +45,9 @@ async function start() {
   const res = await fetch('/api/start');
   const data = await res.json();
   sessionId = data.session_id;
+  if (data.ascii_art) {
+    print(data.ascii_art, 'ascii');
+  }
   print(data.text);
 }
 

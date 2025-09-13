@@ -118,6 +118,28 @@ main.centered {
   color: #33ff33;
 }
 
+#terminal .ascii {
+  color: #33ff33; /* fallback */
+  white-space: pre;
+}
+
+@supports (-webkit-background-clip: text) {
+  #terminal .ascii {
+    background: linear-gradient(
+      to right,
+      #ff5555,
+      #f1fa8c,
+      #50fa7b,
+      #8be9fd,
+      #bd93f9,
+      #ff79c6
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
 #terminal .error {
   color: #ff5555;
 }
