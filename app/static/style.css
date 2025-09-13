@@ -71,6 +71,17 @@ main.centered {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+.instructions {
+  margin: 0 0 1rem 0;
+  color: #ccc;
+  text-align: center;
+  font-family: monospace;
+}
+
+#hotkeys {
+  margin-top: 0.5rem;
+}
+
 #terminal {
   padding: 10px;
   height: 60vh;
