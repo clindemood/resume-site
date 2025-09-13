@@ -1,22 +1,47 @@
 {
-  "overview": {
-    "name": "Chad Lindemood",
-    "title": "Tier 2 Escalations Technician",
-    "location": "Canal Fulton, OH",
-    "email": "chad.lindemood@gmail.com",
-    "phone": "(765) 470-3525",
-    "web": "",
-    "linkedin": "",
-    "summary": "IT professional specializing in cloud and systems administration, endpoint management, and network security."
-  },
-  "experience": [
+  "achievements": [],
+  "certifications": [
     {
       "id": 1,
-      "company": "Computer Technology Managed Services",
-      "role": "Tier 2 Escalations Technician",
-      "location": "Akron, OH",
-      "start": "2024-12",
-      "end": null,
+      "name": "Microsoft Azure Administrator (AZ-104)"
+    },
+    {
+      "id": 2,
+      "name": "AWS Certified Cloud Practitioner"
+    },
+    {
+      "id": 3,
+      "name": "CompTIA A+"
+    },
+    {
+      "id": 4,
+      "name": "CompTIA Network+"
+    },
+    {
+      "id": 5,
+      "name": "CompTIA Security+"
+    },
+    {
+      "id": 6,
+      "name": "ITIL 4"
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.S. Cloud Computing",
+      "id": 1,
+      "institution": "Western Governors University",
+      "year": "2024"
+    },
+    {
+      "degree": "Tech Bootcamp, Computer User Support Specialist Program",
+      "id": 2,
+      "institution": "ACI Learning",
+      "year": "2022"
+    }
+  ],
+  "experience": [
+    {
       "bullets": [
         "Resolved advanced escalations from Tier 1 helpdesk across multiple clients, handling complex networking, system, and endpoint issues.",
         "Directed client onboarding projects end-to-end, from requirements gathering through deployment, ensuring seamless transitions.",
@@ -26,15 +51,21 @@
         "Diagnosed Windows Server and Active Directory issues including GPOs, authentication, and domain outages.",
         "Reduced repeat tickets by documenting solutions, training Tier 1 staff, and standardizing recurring fixes."
       ],
-      "tech": ["SonicWall", "Sophos", "VMware ESXi", "Windows Server", "Active Directory"]
+      "company": "Computer Technology Managed Services",
+      "end": null,
+      "id": 1,
+      "location": "Akron, OH",
+      "role": "Tier 2 Escalations Technician",
+      "start": "2024-12",
+      "tech": [
+        "SonicWall",
+        "Sophos",
+        "VMware ESXi",
+        "Windows Server",
+        "Active Directory"
+      ]
     },
     {
-      "id": 2,
-      "company": "Computer Technology Managed Services",
-      "role": "Field Technician",
-      "location": "Akron, OH",
-      "start": "2024-09",
-      "end": "2024-12",
       "bullets": [
         "Delivered onsite support for desktops and laptops, replacing RAM, drives, and displays to minimize downtime.",
         "Maintained network infrastructure by replacing switches, UniFi Cloud Keys, and UPS batteries, while reorganizing network closets for reliability.",
@@ -42,15 +73,18 @@
         "Participated in ransomware incident response, reimaging endpoints and restoring organizational productivity.",
         "Documented troubleshooting steps and contributed to internal knowledge base for consistent team practices."
       ],
-      "tech": ["UniFi", "UPS"]
+      "company": "Computer Technology Managed Services",
+      "end": "2024-12",
+      "id": 2,
+      "location": "Akron, OH",
+      "role": "Field Technician",
+      "start": "2024-09",
+      "tech": [
+        "UniFi",
+        "UPS"
+      ]
     },
     {
-      "id": 3,
-      "company": "EXOS IT",
-      "role": "IT Service Desk Technician II",
-      "location": "Noblesville, IN",
-      "start": "2024-03",
-      "end": "2024-09",
       "bullets": [
         "Served as primary escalation point for Tier 1 staff, managing complex technical issues and mentoring new technicians.",
         "Authored process documentation and delivered training to improve first-call resolution.",
@@ -59,15 +93,19 @@
         "Collaborated on Active Directory cleanup projects, removing obsolete accounts and standardizing user provisioning.",
         "Integrated applications with Azure AD to enable Single Sign-On, reducing password management burden."
       ],
-      "tech": ["Veeam", "Active Directory", "Azure AD"]
+      "company": "EXOS IT",
+      "end": "2024-09",
+      "id": 3,
+      "location": "Noblesville, IN",
+      "role": "IT Service Desk Technician II",
+      "start": "2024-03",
+      "tech": [
+        "Veeam",
+        "Active Directory",
+        "Azure AD"
+      ]
     },
     {
-      "id": 4,
-      "company": "EXOS IT",
-      "role": "IT Service Desk Technician I",
-      "location": "Noblesville, IN",
-      "start": "2022-11",
-      "end": "2024-03",
       "bullets": [
         "Implemented Intune and Autopilot for hybrid device provisioning, creating applications and configuration profiles.",
         "Coordinated annual PC refresh project, managing device setup, tracking progress, and recommending hardware specs.",
@@ -76,100 +114,212 @@
         "Configured Microsoft Teams Rooms with both hardware and software deployments.",
         "Assisted networking team with VPN, switch rewiring, access points, and cabling tasks."
       ],
-      "tech": ["Intune", "Autopilot", "PowerShell", "Microsoft Teams", "VPN"]
+      "company": "EXOS IT",
+      "end": "2024-03",
+      "id": 4,
+      "location": "Noblesville, IN",
+      "role": "IT Service Desk Technician I",
+      "start": "2022-11",
+      "tech": [
+        "Intune",
+        "Autopilot",
+        "PowerShell",
+        "Microsoft Teams",
+        "VPN"
+      ]
     },
     {
-      "id": 5,
-      "company": "Stay-at-Home Father",
-      "role": "Stay-at-Home Father",
-      "location": "Miami, FL",
-      "start": "2015-01",
-      "end": "2022-07",
       "bullets": [
         "Applied time management, multitasking, and organizational discipline to balance competing demands."
-      ]
+      ],
+      "company": "Stay-at-Home Father",
+      "end": "2022-07",
+      "id": 5,
+      "location": "Miami, FL",
+      "role": "Stay-at-Home Father",
+      "start": "2015-01"
     },
     {
-      "id": 6,
-      "company": "Hall of Fame Flooring",
-      "role": "Flooring Installer",
-      "location": "Cleveland, OH",
-      "start": "2012-06",
-      "end": "2014-12",
       "bullets": [
         "Communicated directly with customers to ensure accurate requirements and high-quality service delivery."
-      ]
+      ],
+      "company": "Hall of Fame Flooring",
+      "end": "2014-12",
+      "id": 6,
+      "location": "Cleveland, OH",
+      "role": "Flooring Installer",
+      "start": "2012-06"
     },
     {
-      "id": 7,
-      "company": "United States Air Force",
-      "role": "Signals Intelligence Analyst",
-      "location": "Fort Meade, MD",
-      "start": "2008-03",
-      "end": "2012-03",
       "bullets": [
         "Conducted complex signal analysis with advanced technical tools.",
         "Collaborated with teams to share intelligence and improve communication channels.",
         "Developed expertise in data analysis and technical problem solving."
+      ],
+      "company": "United States Air Force",
+      "end": "2012-03",
+      "id": 7,
+      "location": "Fort Meade, MD",
+      "role": "Signals Intelligence Analyst",
+      "start": "2008-03"
+    }
+  ],
+  "interests": [],
+  "meta": {
+    "data_source": "resume.html",
+    "last_updated": "2025-05-21",
+    "schema_version": "1.0"
+  },
+  "overview": {
+    "email": "chad.lindemood@gmail.com",
+    "linkedin": "",
+    "location": "Canal Fulton, OH",
+    "name": "Chad Lindemood",
+    "phone": "(765) 470-3525",
+    "summary": "IT professional specializing in cloud and systems administration, endpoint management, and network security.",
+    "title": "Tier 2 Escalations Technician",
+    "web": ""
+  },
+  "projects": [
+    {
+      "demo": null,
+      "id": 1,
+      "name": "Device tracking scripts",
+      "outcome": "PowerShell scripts for device tracking.",
+      "repo": null,
+      "role": "Author",
+      "tech": [
+        "PowerShell"
+      ]
+    },
+    {
+      "demo": null,
+      "id": 2,
+      "name": "Chrome bookmark backup",
+      "outcome": "Chrome bookmark backup automation.",
+      "repo": null,
+      "role": "Author",
+      "tech": [
+        "PowerShell"
       ]
     }
   ],
-  "projects": [
+  "service": [],
+  "skills": [
     {
       "id": 1,
-      "name": "Device tracking scripts",
-      "role": "Author",
-      "repo": null,
-      "demo": null,
-      "tech": ["PowerShell"],
-      "outcome": "PowerShell scripts for device tracking."
+      "level": "proficient",
+      "name": "Azure",
+      "tags": [
+        "cloud"
+      ]
     },
     {
       "id": 2,
-      "name": "Chrome bookmark backup",
-      "role": "Author",
-      "repo": null,
-      "demo": null,
-      "tech": ["PowerShell"],
-      "outcome": "Chrome bookmark backup automation."
+      "level": "proficient",
+      "name": "Active Directory",
+      "tags": [
+        "cloud"
+      ]
+    },
+    {
+      "id": 3,
+      "level": "proficient",
+      "name": "Windows Server",
+      "tags": [
+        "cloud"
+      ]
+    },
+    {
+      "id": 4,
+      "level": "intermediate",
+      "name": "VMware ESXi",
+      "tags": [
+        "cloud"
+      ]
+    },
+    {
+      "id": 5,
+      "level": "proficient",
+      "name": "Microsoft Intune",
+      "tags": [
+        "endpoint"
+      ]
+    },
+    {
+      "id": 6,
+      "level": "proficient",
+      "name": "Autopilot",
+      "tags": [
+        "endpoint"
+      ]
+    },
+    {
+      "id": 7,
+      "level": "proficient",
+      "name": "PowerShell",
+      "tags": [
+        "endpoint"
+      ]
+    },
+    {
+      "id": 8,
+      "level": "intermediate",
+      "name": "SonicWall",
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": 9,
+      "level": "intermediate",
+      "name": "Sophos",
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": 10,
+      "level": "intermediate",
+      "name": "VPN",
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": 11,
+      "level": "intermediate",
+      "name": "UniFi",
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": 12,
+      "level": "intermediate",
+      "name": "Veeam backups",
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": 13,
+      "level": "intermediate",
+      "name": "Microsoft Teams Rooms",
+      "tags": [
+        "collaboration"
+      ]
+    },
+    {
+      "id": 14,
+      "level": "intermediate",
+      "name": "Office Suite",
+      "tags": [
+        "collaboration"
+      ]
     }
   ],
-  "skills": [
-    {"id": 1, "name": "Azure", "level": "proficient", "tags": ["cloud"]},
-    {"id": 2, "name": "Active Directory", "level": "proficient", "tags": ["cloud"]},
-    {"id": 3, "name": "Windows Server", "level": "proficient", "tags": ["cloud"]},
-    {"id": 4, "name": "VMware ESXi", "level": "intermediate", "tags": ["cloud"]},
-    {"id": 5, "name": "Microsoft Intune", "level": "proficient", "tags": ["endpoint"]},
-    {"id": 6, "name": "Autopilot", "level": "proficient", "tags": ["endpoint"]},
-    {"id": 7, "name": "PowerShell", "level": "proficient", "tags": ["endpoint"]},
-    {"id": 8, "name": "SonicWall", "level": "intermediate", "tags": ["network"]},
-    {"id": 9, "name": "Sophos", "level": "intermediate", "tags": ["network"]},
-    {"id": 10, "name": "VPN", "level": "intermediate", "tags": ["network"]},
-    {"id": 11, "name": "UniFi", "level": "intermediate", "tags": ["network"]},
-    {"id": 12, "name": "Veeam backups", "level": "intermediate", "tags": ["network"]},
-    {"id": 13, "name": "Microsoft Teams Rooms", "level": "intermediate", "tags": ["collaboration"]},
-    {"id": 14, "name": "Office Suite", "level": "intermediate", "tags": ["collaboration"]}
-  ],
-  "education": [
-    {"id": 1, "institution": "Western Governors University", "degree": "B.S. Cloud Computing", "year": "2024"},
-    {"id": 2, "institution": "ACI Learning", "degree": "Tech Bootcamp, Computer User Support Specialist Program", "year": "2022"}
-  ],
-  "certifications": [
-    {"id": 1, "name": "Microsoft Azure Administrator (AZ-104)"},
-    {"id": 2, "name": "AWS Certified Cloud Practitioner"},
-    {"id": 3, "name": "CompTIA A+"},
-    {"id": 4, "name": "CompTIA Network+"},
-    {"id": 5, "name": "CompTIA Security+"},
-    {"id": 6, "name": "ITIL 4"}
-  ],
-  "achievements": [],
-  "service": [],
-  "interests": [],
-  "versions": ["general"],
-  "meta": {
-    "last_updated": "2025-05-21",
-    "schema_version": "1.0",
-    "data_source": "resume.html"
-  }
+  "versions": [
+    "general"
+  ]
 }
-
