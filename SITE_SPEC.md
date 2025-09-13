@@ -22,7 +22,7 @@ Utility links: GitHub, LinkedIn, Email, Download PDF Resume.
 ### Above the Fold
 - Headline and subheadline with role and specialties.
 - Primary CTAs: View Resume, See Projects.
-- Centered MUD game container with "Play the MUD" CTA.
+- Centered CLI game container with "Launch CLI" CTA to browse content like a file system.
 - Control to pause/minimize the game.
 - Short note on game relevance to systems thinking and text UX.
 
@@ -60,11 +60,12 @@ Utility links: GitHub, LinkedIn, Email, Download PDF Resume.
 - Contact form with name/email/message, anti-spam, response-time note.
 - Option for calendar link.
 
-## MUD Game Integration
+## CLI Game Integration
 - Prominent panel on homepage.
 - Keyboard-only operation, focus indicators, mute/pause.
 - Statement on data handling and telemetry.
 - Compact mode to minimize game during resume review.
+- Navigate a virtual filesystem with familiar shell commands (ls, cd, cat, pwd).
 
 ## Visual Design and Branding
 - Clean, modern layout with high contrast and legible typography.
