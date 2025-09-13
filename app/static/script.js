@@ -3,12 +3,30 @@ const terminal = document.getElementById('terminal');
 const form = document.getElementById('command-form');
 const input = document.getElementById('command');
 
+// Escape HTML special characters so user content cannot inject markup
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Add simple syntax highlighting to imitate IDE colour schemes
+function colorize(text) {
+  return escapeHtml(text)
+    .replace(/\[(.*?)\]/g, '<span class="bracket">[$1]</span>')
+    .replace(/\b([A-Za-z_]+):/g, '<span class="label">$1:</span>')
+    .replace(/\b\d+\b/g, '<span class="number">$&</span>')
+    .replace(/https?:\/\/[^\s]+/g, '<span class="link">$&</span>')
+    .replace(/\n/g, '<br>');
+}
+
 // Append ``text`` to the terminal output area with an optional CSS class
 function print(text, cls = 'output') {
   if (text) {
     const line = document.createElement('div');
-    line.textContent = text;
     line.className = cls;
+    line.innerHTML = colorize(text);
     terminal.appendChild(line);
   }
   terminal.scrollTop = terminal.scrollHeight;
