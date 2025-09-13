@@ -65,11 +65,16 @@ a:hover {
 }
 
 main.centered {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: none;
-  box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+}
+
+.cli-title {
+  margin-bottom: 1rem;
 }
 
 /* CLI container styling */
@@ -165,8 +170,16 @@ button {
 }
 
 button:hover {
-  background: #00ffff;
-  color: #000;
+    background: #00ffff;
+    color: #000;
+  }
+
+.photo-placeholder {
+  width: 200px;
+  height: 200px;
+  background: #fff;
+  border: 1px solid #ccc;
+  margin: 1rem auto;
 }
 
 footer {
