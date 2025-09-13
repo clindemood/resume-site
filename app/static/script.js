@@ -3,10 +3,13 @@ const terminal = document.getElementById('terminal');
 const form = document.getElementById('command-form');
 const input = document.getElementById('command');
 
-// Append ``text`` to the terminal output area
-function print(text) {
+// Append ``text`` to the terminal output area with an optional CSS class
+function print(text, cls = 'output') {
   if (text) {
-    terminal.textContent += text + '\n';
+    const line = document.createElement('div');
+    line.textContent = text;
+    line.className = cls;
+    terminal.appendChild(line);
   }
   terminal.scrollTop = terminal.scrollHeight;
 }
@@ -27,11 +30,11 @@ async function sendCommand(cmd) {
     body: JSON.stringify({ session_id: sessionId, command: cmd })
   });
   const data = await res.json();
-  print('> ' + cmd);
+  print('$ ' + cmd, 'input');
   if (data.clear) {
     terminal.textContent = '';
   }
-  print(data.text);
+  print(data.text, data.error ? 'error' : 'output');
 }
 
 // Handle manual command entry

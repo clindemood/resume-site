@@ -62,10 +62,12 @@ main.centered {
   box-shadow: none;
 }
 
+/* CLI container styling */
 #game-container {
-  background: #000;
-  color: #0f0;
+  background: #111;
+  color: #33ff33;
   padding: 10px;
+  border: 1px solid #00ffff;
   border-radius: 4px;
   max-width: 600px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -73,7 +75,7 @@ main.centered {
 
 .instructions {
   margin: 0 0 1rem 0;
-  color: #ccc;
+  color: #00ffff;
   text-align: center;
   font-family: monospace;
 }
@@ -89,7 +91,20 @@ main.centered {
   white-space: pre-wrap;
   background: #000;
   font-family: monospace;
-  border: 1px solid #0f0;
+  border: 1px solid #00ffff;
+  color: #33ff33;
+}
+
+#terminal .input {
+  color: #00ffff;
+}
+
+#terminal .output {
+  color: #33ff33;
+}
+
+#terminal .error {
+  color: #ff5555;
 }
 
 #command-form {
@@ -97,10 +112,15 @@ main.centered {
   padding: 10px 0;
 }
 
+#command-form span {
+  color: #00ffff;
+  margin-right: 5px;
+}
+
 #command {
   flex: 1;
   background: #000;
-  color: #0f0;
+  color: #00ffff;
   border: none;
   outline: none;
   font-family: monospace;
@@ -109,8 +129,8 @@ main.centered {
 button {
   margin-right: 5px;
   background: #111;
-  color: #0f0;
-  border: 1px solid #0f0;
+  color: #00ffff;
+  border: 1px solid #00ffff;
   font-family: monospace;
   border-radius: 4px;
   padding: 4px 8px;
@@ -118,7 +138,7 @@ button {
 }
 
 button:hover {
-  background: #0f0;
+  background: #00ffff;
   color: #000;
 }
 
