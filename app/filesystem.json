@@ -5,27 +5,31 @@
       "type": "file",
       "content": "Chad Lindemood is an IT professional specializing in cloud and systems administration, endpoint management, and network security."
     },
-    "skills": {
-      "type": "dir",
-      "children": {
-        "cloud.txt": {
-          "type": "file",
-          "content": "Azure, Active Directory, Windows Server, VMware ESXi."
-        },
-        "endpoint.txt": {
-          "type": "file",
-          "content": "Intune, Autopilot, PowerShell."
-        },
-        "network.txt": {
-          "type": "file",
-          "content": "SonicWall, Sophos, VPN, UniFi, Veeam."
+      "skills": {
+        "type": "dir",
+        "children": {
+          "cloud.txt": {
+            "type": "file",
+            "content": "Azure, Active Directory, Windows Server, VMware ESXi."
+          },
+          "endpoint.txt": {
+            "type": "file",
+            "content": "Microsoft Intune, Autopilot, PowerShell scripting."
+          },
+          "network.txt": {
+            "type": "file",
+            "content": "SonicWall, Sophos, VPN, UniFi, Veeam backups."
+          },
+          "collab.txt": {
+            "type": "file",
+            "content": "Microsoft Teams Rooms, Office Suite."
+          }
         }
-      }
-    },
-    "experience.txt": {
-      "type": "file",
-      "content": "Experience spanning Tier 2 Escalations, IT Service Desk Technician, and Signals Intelligence Analyst."
-    },
+      },
+      "experience.txt": {
+        "type": "file",
+        "content": "Experience spanning Tier 2 Escalations, Field Technician, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst."
+      },
     "projects": {
       "type": "dir",
       "children": {

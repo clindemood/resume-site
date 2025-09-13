@@ -1,77 +1,167 @@
 {
   "overview": {
-    "name": "Jordan Patel",
-    "title": "Site Reliability Engineer",
-    "location": "NYC",
-    "email": "jordan@patel.dev",
-    "web": "patel.dev",
-    "linkedin": "/in/jordanpatel",
-    "summary": "SRE focused on reliability automation and cost-aware scaling. 8+ years."
+    "name": "Chad Lindemood",
+    "title": "Tier 2 Escalations Technician",
+    "location": "Canal Fulton, OH",
+    "email": "chad.lindemood@gmail.com",
+    "phone": "(765) 470-3525",
+    "web": "",
+    "linkedin": "",
+    "summary": "IT professional specializing in cloud and systems administration, endpoint management, and network security."
   },
   "experience": [
     {
       "id": 1,
-      "company": "Acme Corp",
-      "role": "Senior Site Reliability Engineer",
-      "location": "NYC",
-      "start": "2022-03",
+      "company": "Computer Technology Managed Services",
+      "role": "Tier 2 Escalations Technician",
+      "location": "Akron, OH",
+      "start": "2024-12",
       "end": null,
       "bullets": [
-        "Cut mean incident duration 38% via runbooks and SLO-driven paging.",
-        "Built cost guardrails saving ~$420k/yr on compute and egress."
+        "Resolved advanced escalations from Tier 1 helpdesk across multiple clients, handling complex networking, system, and endpoint issues.",
+        "Directed client onboarding projects end-to-end, from requirements gathering through deployment, ensuring seamless transitions.",
+        "Completed infrastructure upgrades and troubleshooting during multi-day onsite engagements under strict deadlines.",
+        "Configured, secured, and troubleshot SonicWall and Sophos firewalls to enhance client security posture.",
+        "Administered VMware ESXi environments, remediating host and VM-level failures to maintain uptime.",
+        "Diagnosed Windows Server and Active Directory issues including GPOs, authentication, and domain outages.",
+        "Reduced repeat tickets by documenting solutions, training Tier 1 staff, and standardizing recurring fixes."
       ],
-      "tech": ["kubernetes", "terraform", "prom", "grafana", "go", "gcp"],
-      "impact": "Improved reliability and reduced cost"
+      "tech": ["SonicWall", "Sophos", "VMware ESXi", "Windows Server", "Active Directory"]
     },
     {
       "id": 2,
-      "company": "Zephyr Health",
-      "role": "DevOps Engineer",
-      "location": "Remote",
-      "start": "2019",
-      "end": "2022",
-      "bullets": ["Implemented CI/CD", "Migrated infrastructure"],
-      "tech": ["aws", "docker"]
+      "company": "Computer Technology Managed Services",
+      "role": "Field Technician",
+      "location": "Akron, OH",
+      "start": "2024-09",
+      "end": "2024-12",
+      "bullets": [
+        "Delivered onsite support for desktops and laptops, replacing RAM, drives, and displays to minimize downtime.",
+        "Maintained network infrastructure by replacing switches, UniFi Cloud Keys, and UPS batteries, while reorganizing network closets for reliability.",
+        "Supported migration and onboarding projects by imaging and deploying devices for end users.",
+        "Participated in ransomware incident response, reimaging endpoints and restoring organizational productivity.",
+        "Documented troubleshooting steps and contributed to internal knowledge base for consistent team practices."
+      ],
+      "tech": ["UniFi", "UPS"]
     },
     {
       "id": 3,
-      "company": "Northwind",
-      "role": "Systems Engineer",
-      "location": "Boston",
-      "start": "2016",
-      "end": "2019",
-      "bullets": ["Managed on-prem servers"],
-      "tech": ["vmware"]
+      "company": "EXOS IT",
+      "role": "IT Service Desk Technician II",
+      "location": "Noblesville, IN",
+      "start": "2024-03",
+      "end": "2024-09",
+      "bullets": [
+        "Served as primary escalation point for Tier 1 staff, managing complex technical issues and mentoring new technicians.",
+        "Authored process documentation and delivered training to improve first-call resolution.",
+        "Supported server patching and monthly updates alongside the systems administrator.",
+        "Monitored and verified Veeam backups, ensuring reliability of disaster recovery.",
+        "Collaborated on Active Directory cleanup projects, removing obsolete accounts and standardizing user provisioning.",
+        "Integrated applications with Azure AD to enable Single Sign-On, reducing password management burden."
+      ],
+      "tech": ["Veeam", "Active Directory", "Azure AD"]
+    },
+    {
+      "id": 4,
+      "company": "EXOS IT",
+      "role": "IT Service Desk Technician I",
+      "location": "Noblesville, IN",
+      "start": "2022-11",
+      "end": "2024-03",
+      "bullets": [
+        "Implemented Intune and Autopilot for hybrid device provisioning, creating applications and configuration profiles.",
+        "Coordinated annual PC refresh project, managing device setup, tracking progress, and recommending hardware specs.",
+        "Streamlined operations by developing PowerShell scripts for device tracking, Chrome bookmark backup, and automation tasks.",
+        "Delivered Microsoft Office Suite training and daily support for end users.",
+        "Configured Microsoft Teams Rooms with both hardware and software deployments.",
+        "Assisted networking team with VPN, switch rewiring, access points, and cabling tasks."
+      ],
+      "tech": ["Intune", "Autopilot", "PowerShell", "Microsoft Teams", "VPN"]
+    },
+    {
+      "id": 5,
+      "company": "Stay-at-Home Father",
+      "role": "Stay-at-Home Father",
+      "location": "Miami, FL",
+      "start": "2015-01",
+      "end": "2022-07",
+      "bullets": [
+        "Applied time management, multitasking, and organizational discipline to balance competing demands."
+      ]
+    },
+    {
+      "id": 6,
+      "company": "Hall of Fame Flooring",
+      "role": "Flooring Installer",
+      "location": "Cleveland, OH",
+      "start": "2012-06",
+      "end": "2014-12",
+      "bullets": [
+        "Communicated directly with customers to ensure accurate requirements and high-quality service delivery."
+      ]
+    },
+    {
+      "id": 7,
+      "company": "United States Air Force",
+      "role": "Signals Intelligence Analyst",
+      "location": "Fort Meade, MD",
+      "start": "2008-03",
+      "end": "2012-03",
+      "bullets": [
+        "Conducted complex signal analysis with advanced technical tools.",
+        "Collaborated with teams to share intelligence and improve communication channels.",
+        "Developed expertise in data analysis and technical problem solving."
+      ]
     }
   ],
   "projects": [
     {
       "id": 1,
-      "name": "Device Tracker",
+      "name": "Device tracking scripts",
       "role": "Author",
-      "repo": "github.com/jpatel/device-tracker",
+      "repo": null,
       "demo": null,
-      "tech": ["powershell"],
-      "outcome": "Simplified asset tracking"
+      "tech": ["PowerShell"],
+      "outcome": "PowerShell scripts for device tracking."
+    },
+    {
+      "id": 2,
+      "name": "Chrome bookmark backup",
+      "role": "Author",
+      "repo": null,
+      "demo": null,
+      "tech": ["PowerShell"],
+      "outcome": "Chrome bookmark backup automation."
     }
   ],
   "skills": [
-    {"id": 1, "name": "kubernetes", "level": "expert", "tags": ["cloud"]},
-    {"id": 2, "name": "terraform", "level": "expert", "tags": ["cloud"]},
-    {"id": 3, "name": "gcp", "level": "proficient", "tags": ["cloud"]},
-    {"id": 4, "name": "powershell", "level": "proficient", "tags": ["backend"]}
+    {"id": 1, "name": "Azure", "level": "proficient", "tags": ["cloud"]},
+    {"id": 2, "name": "Active Directory", "level": "proficient", "tags": ["cloud"]},
+    {"id": 3, "name": "Windows Server", "level": "proficient", "tags": ["cloud"]},
+    {"id": 4, "name": "VMware ESXi", "level": "intermediate", "tags": ["cloud"]},
+    {"id": 5, "name": "Microsoft Intune", "level": "proficient", "tags": ["endpoint"]},
+    {"id": 6, "name": "Autopilot", "level": "proficient", "tags": ["endpoint"]},
+    {"id": 7, "name": "PowerShell", "level": "proficient", "tags": ["endpoint"]},
+    {"id": 8, "name": "SonicWall", "level": "intermediate", "tags": ["network"]},
+    {"id": 9, "name": "Sophos", "level": "intermediate", "tags": ["network"]},
+    {"id": 10, "name": "VPN", "level": "intermediate", "tags": ["network"]},
+    {"id": 11, "name": "UniFi", "level": "intermediate", "tags": ["network"]},
+    {"id": 12, "name": "Veeam backups", "level": "intermediate", "tags": ["network"]},
+    {"id": 13, "name": "Microsoft Teams Rooms", "level": "intermediate", "tags": ["collaboration"]},
+    {"id": 14, "name": "Office Suite", "level": "intermediate", "tags": ["collaboration"]}
   ],
   "education": [
-    {"id": 1, "institution": "WGU", "degree": "B.S. Cloud Computing", "year": "2024"},
-    {"id": 2, "institution": "ACI Learning", "degree": "Tech Bootcamp", "year": "2023"}
+    {"id": 1, "institution": "Western Governors University", "degree": "B.S. Cloud Computing", "year": "2024"},
+    {"id": 2, "institution": "ACI Learning", "degree": "Tech Bootcamp, Computer User Support Specialist Program", "year": "2022"}
   ],
   "achievements": [],
   "service": [],
   "interests": [],
-  "versions": ["general", "engineering", "manager"],
+  "versions": ["general"],
   "meta": {
-    "last_updated": "2025-08-18",
+    "last_updated": "2025-05-21",
     "schema_version": "1.0",
-    "data_source": "resume.json"
+    "data_source": "resume.html"
   }
 }
+
