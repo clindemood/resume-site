@@ -401,8 +401,10 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
                 game["equipment"].append(loot)
                 if target_key == "printer":
                     lines.append(f"The printer jams one last time and erupts in a cloud of toner! Loot: {loot}.")
+                elif target_key == "server":
+                    lines.append(f"The server blue-screens! Loot: {loot}.")
                 else:
-                    lines.append(f"The {target_key} blue-screens! Loot: {loot}.")
+                    lines.append(f"The MDF short-circuits! Loot: {loot}.")
                 game["enemy_hp"][target_key] = 0
                 break
             enemy_hit = random.randint(1, 5)
