@@ -107,6 +107,22 @@ main.centered {
   color: #ff5555;
 }
 
+#terminal .bracket {
+  color: #ff79c6;
+}
+
+#terminal .label {
+  color: #f1fa8c;
+}
+
+#terminal .number {
+  color: #bd93f9;
+}
+
+#terminal .link {
+  color: #8be9fd;
+}
+
 #command-form {
   display: flex;
   padding: 10px 0;
