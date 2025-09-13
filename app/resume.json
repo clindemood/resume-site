@@ -3,27 +3,68 @@
   "certifications": [
     {
       "id": 1,
-      "name": "Microsoft Azure Administrator (AZ-104)"
+      "name": "Cisco Certified Network Associate",
+      "issuer": "Cisco",
+      "issued": "2025-09",
+      "expires": "2028-09",
+      "credential_id": "275797448"
     },
     {
       "id": 2,
-      "name": "AWS Certified Cloud Practitioner"
+      "name": "AZ-104: Microsoft Azure Administrator Associate",
+      "issuer": "Microsoft",
+      "issued": "2023-06"
     },
     {
       "id": 3,
-      "name": "CompTIA A+"
+      "name": "AWS Certified Cloud Practitioner",
+      "issuer": "Amazon Web Services (AWS)",
+      "issued": "2023-05",
+      "expires": "2026-05"
     },
     {
       "id": 4,
-      "name": "CompTIA Network+"
+      "name": "CompTIA Network+ N10-008",
+      "issuer": "CompTIA",
+      "issued": "2022-12",
+      "expires": "2025-12",
+      "credential_id": "438017330"
     },
     {
       "id": 5,
-      "name": "CompTIA Security+"
+      "name": "CompTIA Security+ SY0-601",
+      "issuer": "CompTIA",
+      "issued": "2022-11",
+      "expires": "2025-11",
+      "credential_id": "435440541"
     },
     {
       "id": 6,
-      "name": "ITIL 4"
+      "name": "CompTIA A+ (220-1101 + 220-1102)",
+      "issuer": "CompTIA",
+      "issued": "2023-01",
+      "expires": "2026-01",
+      "credential_id": "439456615"
+    },
+    {
+      "id": 7,
+      "name": "SC-900: Microsoft Security, Compliance, and Identity Fundamentals",
+      "issuer": "Microsoft",
+      "issued": "2023-01",
+      "credential_id": "I588-5933"
+    },
+    {
+      "id": 8,
+      "name": "Azure Data Fundamentals (DP-900)",
+      "issuer": "Microsoft",
+      "issued": "2023-05"
+    },
+    {
+      "id": 9,
+      "name": "ITIL\u00ae Foundation 4 Certificate in IT Service Management",
+      "issuer": "PeopleCert",
+      "issued": "2022-08",
+      "credential_id": "GR671423316CL"
     }
   ],
   "education": [
@@ -172,13 +213,12 @@
   },
   "overview": {
     "email": "chad.lindemood@gmail.com",
-    "linkedin": "https://www.linkedin.com/in/chadlindemood/",
+    "linkedin": "https://linkedin.com/in/chadlindemood/",
     "location": "Canal Fulton, OH",
     "name": "Chad Lindemood",
-    "phone": "(765) 470-3525",
     "summary": "IT professional specializing in cloud and systems administration, endpoint management, and network security.",
     "title": "Tier 2 Escalations Technician",
-    "web": "[needs updated].com",
+    "web": "https://chadlindemood.com",
     "github": "https://github.com/clindemood"
   },
   "projects": [

@@ -72,7 +72,12 @@ def format_date(value: str | None, short: bool = False) -> str:
 
 
 def strip_scheme(url: str | None) -> str:
-    return url.replace("https://", "").replace("http://", "") if url else ""
+    if not url:
+        return ""
+    url = url.replace("https://", "").replace("http://", "")
+    if url.startswith("www."):
+        url = url[4:]
+    return url
 
 
 def format_overview() -> str:
@@ -165,7 +170,19 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
     if section == "education":
         return f"{item['degree']} at {item['institution']} ({item['year']})"
     if section == "certifications":
-        return item.get("name", "")
+        parts = [item.get("name", "")]
+        details = []
+        if issuer := item.get("issuer"):
+            details.append(issuer)
+        if issued := item.get("issued"):
+            details.append(f"Issued {format_date(issued)}")
+        if expires := item.get("expires"):
+            details.append(f"Expires {format_date(expires)}")
+        if cred := item.get("credential_id"):
+            details.append(f"ID {cred}")
+        if details:
+            parts.append(" – " + " · ".join(details))
+        return "".join(parts)
     return ""
 
 
