@@ -218,19 +218,74 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
     )
     defeated = game.setdefault("defeated", set())
 
+    # Command aliases allow terse gameplay commands.
+    aliases = {
+        "eq": "equipment",
+        "equip": "equipment",
+        "i": "equipment",
+        "inv": "equipment",
+        "l": "look",
+        "x": "look",
+        "examine": "look",
+        "a": "attack",
+        "atk": "attack",
+        "hit": "attack",
+        "smash": "attack",
+        "quit": "exit",
+        "q": "exit",
+        "leave": "exit",
+    }
+    command = aliases.get(command.lower(), command.lower())
+
     enemy_descriptions = {
-        "printer": "An ancient ink-spewer smelling faintly of burnt paper.",
-        "server": "A humming tower of silicon plotting packet mischief.",
-        "mdf": "A maze of cabling where ethernet dreams go to die.",
+        "printer": (
+            "An ancient ink-spewer smelling faintly of burnt paper. "
+            "It jams at the slightest provocation and demands tribute in toner. "
+            "Legend says it once printed a TPS report unprompted."
+        ),
+        "server": (
+            "A humming tower of silicon plotting packet mischief. "
+            "Its fans whisper in binary and occasionally tell dad jokes. "
+            "It considers 99.99% uptime a personal insult."
+        ),
+        "mdf": (
+            "A maze of cabling where ethernet dreams go to die. "
+            "Every cord is labelled 'DO NOT TOUCH' and all of them lie. "
+            "The blinking lights double as seasonal décor for network admins."
+        ),
     }
 
     item_descriptions = {
-        "mouse of many clicks": "Mouse of Many Clicks: a rodent blessed with infinite scroll.",
-        "shimmering tech aura": "Shimmering Tech Aura: +10 charisma when debating Kubernetes.",
-        "cat5 of ninetails": "Cat5 of Ninetails: every tail ends in an RJ45 connector.",
-        "mouse": "Mouse of Many Clicks: a rodent blessed with infinite scroll.",
-        "aura": "Shimmering Tech Aura: +10 charisma when debating Kubernetes.",
-        "cat5": "Cat5 of Ninetails: every tail ends in an RJ45 connector.",
+        "mouse of many clicks": (
+            "Mouse of Many Clicks: a rodent blessed with infinite scroll. "
+            "Its left button squeaks sage advice with every press. "
+            "OSHA recommends breaks, but this mouse does not."
+        ),
+        "shimmering tech aura": (
+            "Shimmering Tech Aura: +10 charisma when debating Kubernetes. "
+            "It wraps you in a glow of stack traces and stale coffee. "
+            "Recruiters can sense it from miles away."
+        ),
+        "cat5 of ninetails": (
+            "Cat5 of Ninetails: every tail ends in an RJ45 connector. "
+            "Ideal for disciplining unruly packets or cosplaying a network hydra. "
+            "Emits a satisfying 'click' when swished."
+        ),
+        "mouse": (
+            "Mouse of Many Clicks: a rodent blessed with infinite scroll. "
+            "Its left button squeaks sage advice with every press. "
+            "OSHA recommends breaks, but this mouse does not."
+        ),
+        "aura": (
+            "Shimmering Tech Aura: +10 charisma when debating Kubernetes. "
+            "It wraps you in a glow of stack traces and stale coffee. "
+            "Recruiters can sense it from miles away."
+        ),
+        "cat5": (
+            "Cat5 of Ninetails: every tail ends in an RJ45 connector. "
+            "Ideal for disciplining unruly packets or cosplaying a network hydra. "
+            "Emits a satisfying 'click' when swished."
+        ),
     }
 
     if command == "exit":
@@ -240,7 +295,6 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
     if command == "equipment":
         eq = game.get("equipment", [])
         return {"text": "Equipment: " + ", ".join(eq) if eq else "You carry only your wits."}
-
     if command == "look" and args:
         target = args[0].lower()
         if target in enemy_descriptions:
@@ -257,41 +311,39 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
             return {"text": f"The {target} has already been defeated."}
         enemy_hp = game["enemy_hp"][target]
         player_hp = game["player_hp"]
-        player_hit = random.randint(4, 8)
-        enemy_hp -= player_hit
-        lines = [
-            f"You strike the {target} for {player_hit} damage!",
-            f"{target.capitalize()} HP: {max(enemy_hp,0)}",
-        ]
-        if enemy_hp <= 0:
-            defeated.add(target)
-            loot = {
-                "printer": "Mouse of Many Clicks",
-                "server": "shimmering Tech Aura",
-                "mdf": "Cat5 of Ninetails",
-            }[target]
-            game["equipment"].append(loot)
-            game["enemy_hp"][target] = 0
-            lines.append(f"The {target} collapses! Loot: {loot}.")
-        else:
+        lines: List[str] = []
+        while enemy_hp > 0 and player_hp > 0:
+            player_hit = random.randint(4, 8)
+            enemy_hp -= player_hit
+            lines.append(f"You strike the {target} for {player_hit} damage!")
+            lines.append(f"{target.capitalize()} HP: {max(enemy_hp,0)}")
+            if enemy_hp <= 0:
+                defeated.add(target)
+                loot = {
+                    "printer": "Mouse of Many Clicks",
+                    "server": "shimmering Tech Aura",
+                    "mdf": "Cat5 of Ninetails",
+                }[target]
+                game["equipment"].append(loot)
+                lines.append(f"The {target} collapses! Loot: {loot}.")
+                game["enemy_hp"][target] = 0
+                break
             enemy_hit = random.randint(1, 5)
             player_hp -= enemy_hit
-            game["player_hp"] = player_hp
-            game["enemy_hp"][target] = enemy_hp
-            lines.extend(
-                [
-                    f"The {target} retaliates for {enemy_hit}!",
-                    f"Your HP: {max(player_hp,0)}",
-                ]
-            )
-            if player_hp <= 0:
-                state.pop("mode", None)
-                return {"text": "You collapse in a heap of patch cables. Game over."}
-        if {"printer", "server", "mdf"} <= defeated:
+            lines.append(f"The {target} retaliates for {enemy_hit}!")
+            lines.append(f"Your HP: {max(player_hp,0)}")
+        game["player_hp"] = player_hp
+        game["enemy_hp"][target] = max(enemy_hp, 0)
+        if player_hp <= 0:
+            state.pop("mode", None)
+            lines.append("You collapse in a heap of patch cables. Game over.")
+        elif {"printer", "server", "mdf"} <= defeated:
             lines.append("All foes vanquished! You are the supreme admin.")
         return {"text": "\n".join(lines)}
 
-    return {"text": "Commands: attack printer|server|mdf, look <target>, equipment, exit"}
+    return {
+        "text": "Commands: attack|atk <target>, look|l <target>, equipment|eq, exit|q"
+    }
 
 
 def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
@@ -332,7 +384,8 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
                 "text": (
                     "You slip into a hidden admin arena. "
                     "Targets: printer, server, MDF. "
-                    "Use 'attack <target>', 'equipment', 'look <thing>' or 'exit' to leave."
+                    "Use 'attack <target>' (or 'atk'), 'equipment' ('eq'), "
+                    "'look <thing>' ('l') or 'exit' ('q') to leave."
                 )
             }
         section = args[0]
