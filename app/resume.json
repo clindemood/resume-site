@@ -250,29 +250,11 @@
       "id": 6,
       "name": "Advanced Cisco Enterprise Network Lab",
       "role": "Author",
-      "start": "2025-09",
+      "start": "2025-07",
       "tech": [
         "EVE-NG",
         "OSPF",
         "SNMP"
-      ]
-    },
-    {
-      "bullets": [
-        "Built a small lab with Cisco IOSv routers in EVE-NG.",
-        "Used Python and Ansible playbooks to push standardized configs across devices.",
-        "Enabled SNMP and Syslog exports to a central monitoring server.",
-        "Created dashboards in Grafana to visualize uptime, interface errors, and CPU utilization."
-      ],
-      "id": 5,
-      "name": "Network Automation and Monitoring Project",
-      "role": "Author",
-      "start": "2024-01",
-      "tech": [
-        "EVE-NG",
-        "Cisco IOSv",
-        "Ansible",
-        "Grafana"
       ]
     },
     {
