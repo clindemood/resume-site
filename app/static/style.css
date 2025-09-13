@@ -121,6 +121,7 @@ main.centered {
 
 #terminal .link {
   color: #8be9fd;
+  text-decoration: underline;
 }
 
 #command-form {
