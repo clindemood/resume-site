@@ -1,0 +1,77 @@
+{
+  "overview": {
+    "name": "Jordan Patel",
+    "title": "Site Reliability Engineer",
+    "location": "NYC",
+    "email": "jordan@patel.dev",
+    "web": "patel.dev",
+    "linkedin": "/in/jordanpatel",
+    "summary": "SRE focused on reliability automation and cost-aware scaling. 8+ years."
+  },
+  "experience": [
+    {
+      "id": 1,
+      "company": "Acme Corp",
+      "role": "Senior Site Reliability Engineer",
+      "location": "NYC",
+      "start": "2022-03",
+      "end": null,
+      "bullets": [
+        "Cut mean incident duration 38% via runbooks and SLO-driven paging.",
+        "Built cost guardrails saving ~$420k/yr on compute and egress."
+      ],
+      "tech": ["kubernetes", "terraform", "prom", "grafana", "go", "gcp"],
+      "impact": "Improved reliability and reduced cost"
+    },
+    {
+      "id": 2,
+      "company": "Zephyr Health",
+      "role": "DevOps Engineer",
+      "location": "Remote",
+      "start": "2019",
+      "end": "2022",
+      "bullets": ["Implemented CI/CD", "Migrated infrastructure"],
+      "tech": ["aws", "docker"]
+    },
+    {
+      "id": 3,
+      "company": "Northwind",
+      "role": "Systems Engineer",
+      "location": "Boston",
+      "start": "2016",
+      "end": "2019",
+      "bullets": ["Managed on-prem servers"],
+      "tech": ["vmware"]
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "name": "Device Tracker",
+      "role": "Author",
+      "repo": "github.com/jpatel/device-tracker",
+      "demo": null,
+      "tech": ["powershell"],
+      "outcome": "Simplified asset tracking"
+    }
+  ],
+  "skills": [
+    {"id": 1, "name": "kubernetes", "level": "expert", "tags": ["cloud"]},
+    {"id": 2, "name": "terraform", "level": "expert", "tags": ["cloud"]},
+    {"id": 3, "name": "gcp", "level": "proficient", "tags": ["cloud"]},
+    {"id": 4, "name": "powershell", "level": "proficient", "tags": ["backend"]}
+  ],
+  "education": [
+    {"id": 1, "institution": "WGU", "degree": "B.S. Cloud Computing", "year": "2024"},
+    {"id": 2, "institution": "ACI Learning", "degree": "Tech Bootcamp", "year": "2023"}
+  ],
+  "achievements": [],
+  "service": [],
+  "interests": [],
+  "versions": ["general", "engineering", "manager"],
+  "meta": {
+    "last_updated": "2025-08-18",
+    "schema_version": "1.0",
+    "data_source": "resume.json"
+  }
+}

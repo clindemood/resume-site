@@ -4,7 +4,9 @@ const form = document.getElementById('command-form');
 const input = document.getElementById('command');
 
 function print(text) {
-  terminal.textContent += text + '\n';
+  if (text) {
+    terminal.textContent += text + '\n';
+  }
   terminal.scrollTop = terminal.scrollHeight;
 }
 
@@ -23,6 +25,9 @@ async function sendCommand(cmd) {
   });
   const data = await res.json();
   print('> ' + cmd);
+  if (data.clear) {
+    terminal.textContent = '';
+  }
   print(data.text);
 }
 
