@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import shlex
 import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -47,17 +48,29 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # and auxiliary data such as expanded items or user notes.
 sessions: Dict[str, Dict[str, Any]] = {}
 
-ITEMS_PER_PAGE = 3
+ITEMS_PER_PAGE = 5
 
 # ---------------------------------------------------------------------------
 # Helper formatting utilities
 # ---------------------------------------------------------------------------
 
+def format_date(value: str | None) -> str:
+    if not value:
+        return "Present"
+    try:
+        return datetime.strptime(value, "%Y-%m").strftime("%b %Y")
+    except ValueError:
+        return value
+
+
 def format_overview() -> str:
     o = RESUME.get("overview", {})
     lines = [
         f"Name: {o.get('name')} | {o.get('title')} | {o.get('location')}",
-        f"Email: {o.get('email')} | Web: {o.get('web')} | LinkedIn: {o.get('linkedin')}",
+        (
+            f"Email: {o.get('email')} | Web: {o.get('web')} | "
+            f"LinkedIn: {o.get('linkedin')} | GitHub: {o.get('github')}"
+        ),
         f"Summary: {o.get('summary')}",
     ]
     return "\n".join(lines)
@@ -92,7 +105,10 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
     lines: List[str] = []
     for idx, item in state["last_items"].items():
         if section == "experience":
-            base = f"[{idx}] {item['company']} | {item['role']} | {item['start']}–{item.get('end', 'Present')} | {item['location']}"
+            base = (
+                f"[{idx}] {item['company']} | {item['role']} | "
+                f"{format_date(item['start'])}–{format_date(item.get('end'))} | {item['location']}"
+            )
         elif section == "projects":
             base = f"[{idx}] {item['name']}"
         elif section == "skills":
@@ -113,7 +129,7 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
         lines = [
             f"Company: {item['company']}",
             f"Role: {item['role']}",
-            f"Dates: {item['start']} → {item.get('end', 'Present')}",
+            f"Dates: {format_date(item['start'])} → {format_date(item.get('end'))}",
             "Highlights:",
         ]
         lines.extend([f"- {b}" for b in item.get("bullets", [])])
@@ -261,7 +277,8 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         items = RESUME.get(sec, [])
         lines = [
             " → ".join(
-                f"{i.get('start')}–{i.get('end', 'Present')} {i.get('company', i.get('name'))}" for i in items
+                f"{format_date(i.get('start'))}–{format_date(i.get('end'))} {i.get('company', i.get('name'))}"
+                for i in items
             )
         ]
         return {"text": "".join(lines)}
@@ -304,7 +321,12 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     if command == "contact":
         o = RESUME.get("overview", {})
-        return {"text": f"Email: {o.get('email')} | Phone: (N/A) | Web: {o.get('web')}"}
+        return {
+            "text": (
+                f"Email: {o.get('email')} | Web: {o.get('web')} | "
+                f"LinkedIn: {o.get('linkedin')} | GitHub: {o.get('github')}"
+            )
+        }
 
     if command == "copy" and args:
         field = args[0]

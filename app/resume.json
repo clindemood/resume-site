@@ -172,13 +172,14 @@
   },
   "overview": {
     "email": "chad.lindemood@gmail.com",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/chadlindemood/",
     "location": "Canal Fulton, OH",
     "name": "Chad Lindemood",
     "phone": "(765) 470-3525",
     "summary": "IT professional specializing in cloud and systems administration, endpoint management, and network security.",
     "title": "Tier 2 Escalations Technician",
-    "web": ""
+    "web": "[needs updated].com",
+    "github": "https://github.com/clindemood"
   },
   "projects": [
     {

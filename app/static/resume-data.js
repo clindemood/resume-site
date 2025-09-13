@@ -3,6 +3,13 @@ async function fetchResume() {
   return await res.json();
 }
 
+function formatDate(str) {
+  if (!str) return 'Present';
+  const [y, m] = str.split('-');
+  const d = new Date(Number(y), Number(m) - 1);
+  return d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+}
+
 export async function loadAbout() {
   const r = await fetchResume();
   const p = document.getElementById('about-text');
@@ -53,7 +60,7 @@ export async function loadResume() {
   main.appendChild(h1);
 
   const contact = document.createElement('p');
-  contact.innerHTML = `${r.overview.location} | ${r.overview.phone} | <a href="mailto:${r.overview.email}">${r.overview.email}</a>`;
+  contact.innerHTML = `${r.overview.location} | ${r.overview.phone} | <a href="mailto:${r.overview.email}">${r.overview.email}</a> | <a href="${r.overview.web}" target="_blank">${r.overview.web}</a> | <a href="${r.overview.linkedin}" target="_blank">${r.overview.linkedin}</a> | <a href="${r.overview.github}" target="_blank">${r.overview.github}</a>`;
   main.appendChild(contact);
 
   const expH2 = document.createElement('h2');
@@ -64,7 +71,7 @@ export async function loadResume() {
     h3.textContent = `${exp.role} – ${exp.company}`;
     main.appendChild(h3);
     const p = document.createElement('p');
-    p.textContent = `${exp.start} – ${exp.end || 'Present'} | ${exp.location}`;
+    p.textContent = `${formatDate(exp.start)} – ${formatDate(exp.end)} | ${exp.location}`;
     main.appendChild(p);
     if (exp.bullets && exp.bullets.length) {
       const ul = document.createElement('ul');
