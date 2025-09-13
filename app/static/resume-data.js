@@ -4,7 +4,7 @@ async function fetchResume() {
 }
 
 function stripScheme(url) {
-  return url.replace(/^https?:\/\//, '');
+  return url.replace(/^https?:\/\/(www\.)?/, '');
 }
 
 function formatDate(str, short = false) {
@@ -51,7 +51,12 @@ export async function loadEducation() {
   if (certList && r.certifications) {
     r.certifications.forEach(c => {
       const li = document.createElement('li');
-      li.textContent = c.name || c;
+      const details = [];
+      if (c.issuer) details.push(c.issuer);
+      if (c.issued) details.push(`Issued ${formatDate(c.issued)}`);
+      if (c.expires) details.push(`Expires ${formatDate(c.expires)}`);
+      if (c.credential_id) details.push(`ID ${c.credential_id}`);
+      li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
       certList.appendChild(li);
     });
   }
@@ -67,7 +72,14 @@ export async function loadResume() {
   main.appendChild(h1);
 
   const contact = document.createElement('p');
-  contact.innerHTML = `${r.overview.location} | ${r.overview.phone} | <a href="mailto:${r.overview.email}">${r.overview.email}</a> | <a href="${r.overview.web}" target="_blank">${stripScheme(r.overview.web)}</a> | <a href="${r.overview.linkedin}" target="_blank">${stripScheme(r.overview.linkedin)}</a> | <a href="${r.overview.github}" target="_blank">${stripScheme(r.overview.github)}</a>`;
+  const parts = [
+    r.overview.location,
+    `<a href="mailto:${r.overview.email}">${r.overview.email}</a>`,
+    `<a href="${r.overview.web}" target="_blank">${stripScheme(r.overview.web)}</a>`,
+    `<a href="${r.overview.linkedin}" target="_blank">LinkedIn</a>`,
+    `<a href="${r.overview.github}" target="_blank">GitHub</a>`
+  ];
+  contact.innerHTML = parts.join(' | ');
   main.appendChild(contact);
 
   const expH2 = document.createElement('h2');
@@ -109,7 +121,12 @@ export async function loadResume() {
     const certUl = document.createElement('ul');
     r.certifications.forEach(c => {
       const li = document.createElement('li');
-      li.textContent = c.name || c;
+      const details = [];
+      if (c.issuer) details.push(c.issuer);
+      if (c.issued) details.push(`Issued ${formatDate(c.issued)}`);
+      if (c.expires) details.push(`Expires ${formatDate(c.expires)}`);
+      if (c.credential_id) details.push(`ID ${c.credential_id}`);
+      li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
       certUl.appendChild(li);
     });
     main.appendChild(certUl);
