@@ -58,7 +58,8 @@ def format_date(value: str | None) -> str:
     if not value:
         return "Present"
     try:
-        return datetime.strptime(value, "%Y-%m").strftime("%b %Y")
+        dt = datetime.strptime(value, "%Y-%m")
+        return f"{dt.month} {dt.year}"
     except ValueError:
         return value
 
@@ -120,7 +121,10 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
         lines.append(base)
         if expand:
             lines.append(render_details(section, item))
-    lines.append(f"Page {page}/{total_pages} • use 'show <id>' or 'expand <id>'")
+    hint = " • type 'next' to see more" if page < total_pages else ""
+    lines.append(
+        f"Page {page}/{total_pages} • use 'show <id>' or 'expand <id>'{hint}"
+    )
     return "\n".join(lines)
 
 
@@ -435,7 +439,7 @@ HELP_TEXT = (
     "  back                                 — return to previous view\n"
     "  search <query> [--in <section>]      — full-text search\n"
     "  filter [section] field=value         — filter items\n"
-    "  timeline                             — show experience timeline\n"
+    "  timeline [--section <name>]          — show section timeline\n"
     "  certifications [--expand] [--page N] — list certifications\n"
     "  skills [--level L] [--tag t1,t2]     — list skills\n"
     "  contact                              — show contact info\n"
@@ -445,19 +449,27 @@ HELP_TEXT = (
     "  versions [--list|--diff]             — resume versions\n"
     "  tags --list|--add|--remove           — manage tags\n"
     "  notes --add|--show                   — manage notes\n"
-    "  print [--detailed]                   — print resume\n"
-    "  theme <name>                         — set theme\n"
-    "  about                                — show resume metadata\n"
-    "  clear                                — clear screen\n"
-    "  quit                                 — exit the game\n"
     "Type 'help <command>' for more details."
 )
 
 COMMAND_HELP = {
     "open": "open <section> [--expand] [--page N] — show a section.",
     "show": "show <id> — open one item by its ID from the last listing. You can also type the id number directly.",
+    "next": "next — go to the next page of the current section.",
+    "prev": "prev — go to the previous page of the current section.",
+    "back": "back — return to the previous view.",
     "search": "search <query> [--in <section>] — full-text search.",
+    "filter": "filter [section] field=value — filter items.",
+    "timeline": "timeline [--section <name>] — show a section timeline.",
     "certifications": "certifications [--expand] [--page N] — list certifications.",
+    "skills": "skills [--level L] [--tag t1,t2] — list skills.",
+    "contact": "contact — show contact info.",
+    "copy": "copy <field> — copy a field from the overview section.",
+    "share": "share — show the public resume link.",
+    "download": "download [--filename name] — download the resume.",
+    "versions": "versions [--list|--diff] — resume versions or diff.",
+    "tags": "tags --list|--add <id> <tag>|--remove <id> <tag> — manage tags.",
+    "notes": "notes --add <id> 'text'|--show <id> — manage notes.",
 }
 
 # ---------------------------------------------------------------------------
