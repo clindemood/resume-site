@@ -142,7 +142,7 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
             lines.append(render_details(section, item))
     hint = " • type 'next' to see more" if page < total_pages else ""
     lines.append(
-        f"Page {page}/{total_pages} • use 'show <id>'{hint}"
+        f"Page {page}/{total_pages} • use 'show <id>' or type the number{hint}"
     )
     return "\n".join(lines)
 
@@ -443,6 +443,10 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
             return {
                 "text": (
                     "You slip into a hidden admin arena, a dusky back-room buzzing with tired tech. "
+                    "Dust-caked racks loom in the shadows, cables snake like vines across scuffed concrete, "
+                    "and the air thrums with the low hum of overworked servers. "
+                    "Flickering LEDs cast restless patterns across abandoned manuals and half-empty coffee cups, "
+                    "painting the space as both sanctuary and battleground for weary sysadmins. "
                     "Targets: printer, server, MDF. "
                     "Use 'attack <target>' (or 'atk'), 'equipment' ('eq'), "
                     "'look <thing>' ('l') or 'exit' ('q') to leave."
