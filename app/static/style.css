@@ -119,8 +119,7 @@ main.centered {
 }
 
 #terminal .ascii {
-  color: #33ff33; /* fallback */
-  white-space: pre;
+
   background: linear-gradient(
     to right,
     #ff5555,
