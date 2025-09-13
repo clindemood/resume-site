@@ -261,7 +261,6 @@
       "bullets": [
         "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.",
         "Configured stateful firewall rules, VLAN segmentation, and port forwarding.",
-        "Integrated Suricata IDS to monitor for malicious traffic patterns.",
         "Tested security by running controlled nmap scans and logging alerts."
       ],
       "id": 4,

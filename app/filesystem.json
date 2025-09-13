@@ -35,7 +35,7 @@
           "type": "file"
         },
         "2023-06-firewall-intrusion-detection-lab.txt": {
-          "content": "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.\nConfigured stateful firewall rules, VLAN segmentation, and port forwarding.\nIntegrated Suricata IDS to monitor for malicious traffic patterns.\nTested security by running controlled nmap scans and logging alerts.",
+          "content": "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.\nConfigured stateful firewall rules, VLAN segmentation, and port forwarding.\nTested security by running controlled nmap scans and logging alerts.",
           "type": "file"
         },
         "2025-07-advanced-cisco-enterprise-network-lab.txt": {

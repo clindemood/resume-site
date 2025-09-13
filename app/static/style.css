@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #f5f7fa;
@@ -75,6 +77,10 @@ main.centered {
 
 .cli-title {
   margin-bottom: 1rem;
+  font-family: 'VT323', monospace;
+  font-size: 2.5rem;
+  color: #33ff33;
+  text-shadow: 0 0 5px #33ff33, 0 0 10px #00ffff;
 }
 
 /* CLI container styling */
