@@ -71,17 +71,19 @@ main.centered {
     align-items: center;
     background: none;
     box-shadow: none;
+    margin: 1rem auto;
 }
 
 .cli-title {
-  margin-bottom: 1rem;
-  font-family: monospace;
-  color: #33ff33;
-  background: #000;
-  padding: 0.5rem 1rem;
-  border: 1px solid #00ffff;
-  display: inline-block;
-  text-shadow: 0 0 5px #33ff33;
+  margin: 0 0 1rem 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  background: none;
+  padding: 0;
+  border: none;
+  display: block;
+  text-shadow: none;
+  font-size: 2rem;
 }
 
 /* CLI container styling */
@@ -206,15 +208,11 @@ button:hover {
   flex: 1;
 }
 
-.photo-placeholder {
+.headshot {
   width: 200px;
   height: 200px;
-  background: #fff;
   border: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
