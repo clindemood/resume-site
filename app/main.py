@@ -29,6 +29,21 @@ def describe_room(key: str) -> str:
 def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
+
+@app.get("/projects", response_class=FileResponse)
+def projects() -> FileResponse:
+    return FileResponse(STATIC_DIR / "projects.html")
+
+
+@app.get("/education", response_class=FileResponse)
+def education() -> FileResponse:
+    return FileResponse(STATIC_DIR / "education.html")
+
+
+@app.get("/about", response_class=FileResponse)
+def about() -> FileResponse:
+    return FileResponse(STATIC_DIR / "about.html")
+
 @app.get("/api/start")
 def start():
     session_id = str(uuid.uuid4())
