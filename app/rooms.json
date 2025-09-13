@@ -21,8 +21,8 @@
   },
   "experience": {
     "name": "Experience",
-    "description": "Previously built numerous applications and guided teams through quests.",
-    "exits": {"east": "entrance"}
+    "description": "Previously built numerous applications and guided teams through quests. A passage leads north to Projects.",
+    "exits": {"east": "entrance", "north": "projects"}
   },
   "contact": {
     "name": "Contact",
@@ -33,5 +33,10 @@
     "name": "Certifications",
     "description": "Certified Python Professional, Cloud Adventurer.",
     "exits": {"north": "skills"}
+  },
+  "projects": {
+    "name": "Projects",
+    "description": "A showroom highlighting recent quests and accomplishments.",
+    "exits": {"south": "experience"}
   }
 }
