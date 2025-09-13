@@ -1,0 +1,42 @@
+{
+  "entrance": {
+    "name": "Entrance Hall",
+    "description": "You stand in the foyer of Chad Lindemood's interactive resume. Exits lead north to About, east to Skills, west to Experience, south to Contact.",
+    "exits": {"north": "about", "east": "skills", "west": "experience", "south": "contact"}
+  },
+  "about": {
+    "name": "About",
+    "description": "Chad Lindemood is an IT professional specializing in cloud and systems administration, endpoint management, and network security.",
+    "exits": {"south": "entrance", "east": "education"}
+  },
+  "skills": {
+    "name": "Skills",
+    "description": "Cloud & Systems: Azure, Active Directory, Windows Server, VMware ESXi. Endpoint Management: Intune, Autopilot, PowerShell. Networking & Security: SonicWall, Sophos, VPN, UniFi, Veeam. Collaboration: Microsoft Teams Rooms, Office Suite.",
+    "exits": {"west": "entrance", "south": "certifications"}
+  },
+  "education": {
+    "name": "Education",
+    "description": "Western Governors University – B.S. Cloud Computing (expected Dec 2024). ACI Learning – Tech Bootcamp, Computer User Support Specialist Program (Sep 2022).",
+    "exits": {"west": "about"}
+  },
+  "experience": {
+    "name": "Experience",
+    "description": "A career spanning Tier 2 Escalations and Field Technician roles at Computer Technology Managed Services, IT Service Desk Technician at EXOS IT, and service as a Signals Intelligence Analyst in the U.S. Air Force. A passage leads north to Projects.",
+    "exits": {"east": "entrance", "north": "projects"}
+  },
+  "contact": {
+    "name": "Contact",
+    "description": "Connect with Chad at chad.lindemood@gmail.com or (765) 470-3525 in Canal Fulton, OH.",
+    "exits": {"north": "entrance"}
+  },
+  "certifications": {
+    "name": "Certifications",
+    "description": "Microsoft Azure Administrator (AZ-104), AWS Certified Cloud Practitioner, CompTIA A+, Network+, Security+, ITIL 4.",
+    "exits": {"north": "skills"}
+  },
+  "projects": {
+    "name": "Projects",
+    "description": "PowerShell scripts for device tracking and Chrome bookmark backup streamline IT operations.",
+    "exits": {"south": "experience"}
+  }
+}
