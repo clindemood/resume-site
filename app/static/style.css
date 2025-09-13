@@ -10,7 +10,7 @@ body {
 }
 
 header {
-  background: #2c3e50;
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
   color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
@@ -20,6 +20,7 @@ nav {
   display: flex;
   justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 nav a {
@@ -31,20 +32,34 @@ nav a {
 }
 
 nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #2c3e50;
+  margin-top: 0;
 }
 
 main {
   flex: 1;
+  width: 90%;
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
   padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 main.centered {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: none;
+  box-shadow: none;
 }
 
 #game-container {
@@ -94,5 +109,12 @@ button {
 button:hover {
   background: #0f0;
   color: #000;
+}
+
+footer {
+  background: #2c3e50;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
 }
 
