@@ -461,14 +461,11 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
             }
             return {
                 "text": (
-                    "You slip into a hidden admin arena, a dusky back-room buzzing with tired tech. "
-                    "Dust-caked racks loom in the shadows, cables snake like vines across scuffed concrete, "
-                    "and the air thrums with the low hum of overworked servers. "
-                    "Flickering LEDs cast restless patterns across abandoned manuals and half-empty coffee cups, "
-                    "painting the space as both sanctuary and battleground for weary sysadmins. "
-                    "Targets: printer, server, MDF. "
-                    "Use 'attack <target>' (or 'atk'), 'equipment' ('eq'), "
-                    "'look <thing>' ('l') or 'exit' ('q') to leave."
+                    "Welcome to the admin arena minigame. "
+                    "Here you practice taming troublesome infrastructure before it fails. "
+                    "Your targets are the printer, server, and MDF. "
+                    "Use 'attack <target>' (or 'atk') to engage a system, manage gear with 'equipment' ('eq'), "
+                    "inspect with 'look <thing>' ('l'), and leave anytime with 'exit' ('q')."
                 )
             }
         section = args[0]
