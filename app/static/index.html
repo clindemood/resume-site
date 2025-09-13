@@ -17,19 +17,21 @@
   </header>
   <main class="centered">
     <div id="game-container">
+      <p class="instructions">Explore this interactive resume using the command line below. Try the buttons for quick access or type <kbd>help</kbd> to see all commands.</p>
       <div id="terminal"></div>
       <form id="command-form">
         <span>$</span>
         <input id="command" autocomplete="off" autofocus />
       </form>
       <div id="hotkeys">
-        <button data-cmd="ls" type="button">ls</button>
-        <button data-cmd="pwd" type="button">pwd</button>
-        <button data-cmd="cd .." type="button">cd ..</button>
-        <button data-cmd="help" type="button">help</button>
+        <button data-cmd="open overview" type="button">Overview</button>
+        <button data-cmd="open experience" type="button">Experience</button>
+        <button data-cmd="open projects" type="button">Projects</button>
+        <button data-cmd="open education" type="button">Education</button>
+        <button data-cmd="help" type="button">Help</button>
       </div>
     </div>
-    </main>
+  </main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
