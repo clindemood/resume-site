@@ -6,17 +6,43 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div id="terminal"></div>
-  <form id="command-form">
-    <span>$</span>
-    <input id="command" autocomplete="off" autofocus />
-  </form>
-  <div id="hotkeys">
-    <button data-cmd="look" type="button">Look</button>
-    <button data-cmd="inventory" type="button">Inventory</button>
-    <button data-cmd="help" type="button">Help</button>
-    <button data-cmd="map" type="button">Map</button>
-  </div>
+  <header>
+    <h1>Jane Doe</h1>
+    <p>Software Developer</p>
+  </header>
+  <main>
+    <section id="interactive">
+      <h2>Interactive Resume</h2>
+      <div id="game-container">
+        <div id="terminal"></div>
+        <form id="command-form">
+          <span>$</span>
+          <input id="command" autocomplete="off" autofocus />
+        </form>
+        <div id="hotkeys">
+          <button data-cmd="look" type="button">Look</button>
+          <button data-cmd="inventory" type="button">Inventory</button>
+          <button data-cmd="help" type="button">Help</button>
+          <button data-cmd="map" type="button">Map</button>
+        </div>
+      </div>
+    </section>
+    <section id="about">
+      <h2>About</h2>
+      <p>Brief introduction and career objective go here.</p>
+    </section>
+    <section id="experience">
+      <h2>Experience</h2>
+      <ul>
+        <li><strong>Job Title</strong> - Company Name</li>
+        <li><strong>Job Title</strong> - Company Name</li>
+      </ul>
+    </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Email: jane.doe@example.com</p>
+    </section>
+  </main>
   <script src="/static/script.js"></script>
 </body>
 </html>
