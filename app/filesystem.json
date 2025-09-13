@@ -20,19 +20,35 @@
         "content": "Experience spanning Tier 2 Escalations, Field Technician II, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst.",
         "type": "file"
       },
-      "projects": {
-        "children": {
-        "bookmark-backup.txt": {
-          "content": "Chrome bookmark backup automation.",
-          "type": "file"
+        "projects": {
+          "children": {
+            "2022-11-basic-secure-network-lab.txt": {
+              "content": "Built a small Packet Tracer lab with 2 routers, 2 switches, and multiple VLANs.\nConfigured static routing, DHCP, NAT, and ACLs to restrict traffic between VLANs.\nDocumented a basic network topology and simulated external internet access.",
+              "type": "file"
+            },
+            "2023-01-active-directory-endpoint-management-lab.txt": {
+              "content": "Set up a Windows Server VM running Active Directory Domain Services.\nJoined Windows 10 clients to the domain, created user accounts, and tested Group Policies.\nIntegrated an Azure AD trial tenant for hybrid identity experiments.",
+              "type": "file"
+            },
+            "2023-05-cloud-foundations-deployment.txt": {
+              "content": "Deployed a small website to both AWS EC2 and Azure App Services.\nConfigured IAM and RBAC roles for secure access management.\nUsed S3 and Azure Storage to host static content and compared performance.",
+              "type": "file"
+            },
+            "2023-06-firewall-intrusion-detection-lab.txt": {
+              "content": "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.\nConfigured stateful firewall rules, VLAN segmentation, and port forwarding.\nIntegrated Suricata IDS to monitor for malicious traffic patterns.\nTested security by running controlled nmap scans and logging alerts.",
+              "type": "file"
+            },
+            "2024-01-network-automation-monitoring.txt": {
+              "content": "Built a small lab with Cisco IOSv routers in EVE-NG.\nUsed Python and Ansible playbooks to push standardized configs across devices.\nEnabled SNMP and Syslog exports to a central monitoring server.\nCreated dashboards in Grafana to visualize uptime, interface errors, and CPU utilization.",
+              "type": "file"
+            },
+            "2025-09-advanced-cisco-enterprise-network-lab.txt": {
+              "content": "Built an advanced EVE-NG topology simulating a branch office network.\nConfigured dynamic routing with OSPF, inter-VLAN routing, and port security.\nImplemented SNMP monitoring and Syslog forwarding.\nValidated resiliency by simulating link failures and verifying failover.",
+              "type": "file"
+            }
+          },
+          "type": "dir"
         },
-        "device-tracker.txt": {
-          "content": "PowerShell scripts for device tracking.",
-          "type": "file"
-        }
-      },
-      "type": "dir"
-    },
     "skills": {
       "children": {
         "cloud.txt": {

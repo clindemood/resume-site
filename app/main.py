@@ -127,7 +127,10 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
                 f"{format_date(item['start'])} - {format_date(item.get('end'), True)} | {item['location']}"
             )
         elif section == "projects":
-            base = f"[{idx}] {item['name']}"
+            if item.get("start"):
+                base = f"[{idx}] {format_date(item['start'])} - {item['name']}"
+            else:
+                base = f"[{idx}] {item['name']}"
         elif section == "skills":
             base = f"[{idx}] {item['name']} ({item.get('level')})"
         elif section == "education":
@@ -157,11 +160,17 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
             lines.append("Tech: " + ", ".join(tech))
         return "\n".join(lines)
     if section == "projects":
-        lines = [f"Name: {item['name']}", f"Role: {item['role']}" ]
+        lines = [f"Name: {item['name']}"]
+        if start := item.get("start"):
+            lines.append(f"Date: {format_date(start)}")
+        lines.append(f"Role: {item.get('role', '')}")
         if repo := item.get("repo"):
             lines.append(f"Repo: {repo}")
         if tech := item.get("tech"):
             lines.append("Tech: " + ", ".join(tech))
+        if bullets := item.get("bullets"):
+            lines.append("Details:")
+            lines.extend([f"- {b}" for b in bullets])
         if outcome := item.get("outcome"):
             lines.append(f"Outcome: {outcome}")
         return "\n".join(lines)

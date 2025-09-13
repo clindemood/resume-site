@@ -31,7 +31,23 @@ export async function loadProjects() {
   if (list) {
     r.projects.forEach(p => {
       const li = document.createElement('li');
-      li.textContent = p.outcome ? `${p.name} — ${p.outcome}` : p.name;
+      const heading = document.createElement('strong');
+      const date = p.start ? `${formatDate(p.start)} – ` : '';
+      heading.textContent = `${date}${p.name}`;
+      li.appendChild(heading);
+      if (Array.isArray(p.bullets) && p.bullets.length) {
+        const ul = document.createElement('ul');
+        p.bullets.forEach(b => {
+          const li2 = document.createElement('li');
+          li2.textContent = b;
+          ul.appendChild(li2);
+        });
+        li.appendChild(ul);
+      } else if (p.outcome) {
+        const pEl = document.createElement('p');
+        pEl.textContent = p.outcome;
+        li.appendChild(pEl);
+      }
       list.appendChild(li);
     });
   }
