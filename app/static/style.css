@@ -189,12 +189,26 @@ button:hover {
     color: #000;
   }
 
+.about-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.about-text {
+  flex: 1;
+}
+
 .photo-placeholder {
   width: 200px;
   height: 200px;
   background: #fff;
   border: 1px solid #ccc;
-  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 footer {
