@@ -165,6 +165,14 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     command = parts[0]
     args = parts[1:]
 
+    # Allow using just the numeric id to show an item
+    if command.isdigit() and not args:
+        item = state.get("last_items", {}).get(command)
+        if not item:
+            return {"text": "Unknown id."}
+        section = state.get("current_section")
+        return {"text": render_details(section, item)}
+
     # Basic navigation -----------------------------------------------------
     if command == "help":
         return {"text": HELP_TEXT if not args else COMMAND_HELP.get(args[0], "No help available.")}
@@ -385,14 +393,33 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 HELP_TEXT = (
-    "Commands: help, open <section>, show <id>, next, prev, back, search <q>, "
-    "filter [section] field=value, timeline, skills, contact, copy <field>, "
-    "share, download, versions, tags, notes, print, theme, about, clear, quit"
+    "Available commands:\n"
+    "  open <section> [--expand] [--page N]  — show a section\n"
+    "  show <id> or <id>                    — show an item from the last listing\n"
+    "  next | prev                          — paginate through the current section\n"
+    "  back                                 — return to previous view\n"
+    "  search <query> [--in <section>]      — full-text search\n"
+    "  filter [section] field=value         — filter items\n"
+    "  timeline                             — show experience timeline\n"
+    "  skills [--level L] [--tag t1,t2]     — list skills\n"
+    "  contact                              — show contact info\n"
+    "  copy <field>                         — copy a field\n"
+    "  share                                — show public link\n"
+    "  download [--filename name]           — download resume\n"
+    "  versions [--list|--diff]             — resume versions\n"
+    "  tags --list|--add|--remove           — manage tags\n"
+    "  notes --add|--show                   — manage notes\n"
+    "  print [--detailed]                   — print resume\n"
+    "  theme <name>                         — set theme\n"
+    "  about                                — show resume metadata\n"
+    "  clear                                — clear screen\n"
+    "  quit                                 — exit the game\n"
+    "Type 'help <command>' for more details."
 )
 
 COMMAND_HELP = {
     "open": "open <section> [--expand] [--page N] — show a section.",
-    "show": "show <id> — open one item by its ID from the last listing.",
+    "show": "show <id> — open one item by its ID from the last listing. You can also type the id number directly.",
     "search": "search <query> [--in <section>] — full-text search.",
 }
 
