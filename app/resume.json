@@ -223,53 +223,17 @@
   },
   "projects": [
     {
-      "id": 1,
-      "name": "Basic Secure Network Lab",
-      "start": "2022-11",
+      "id": 6,
+      "name": "Advanced Cisco Enterprise Network Lab",
+      "start": "2025-09",
       "role": "Author",
       "bullets": [
-        "Built a small Packet Tracer lab with 2 routers, 2 switches, and multiple VLANs.",
-        "Configured static routing, DHCP, NAT, and ACLs to restrict traffic between VLANs.",
-        "Documented a basic network topology and simulated external internet access."
+        "Built an advanced EVE-NG topology simulating a branch office network.",
+        "Configured dynamic routing with OSPF, inter-VLAN routing, and port security.",
+        "Implemented SNMP monitoring and Syslog forwarding.",
+        "Validated resiliency by simulating link failures and verifying failover."
       ],
-      "tech": ["Packet Tracer", "DHCP", "NAT", "ACLs"]
-    },
-    {
-      "id": 2,
-      "name": "Active Directory & Endpoint Management Lab",
-      "start": "2023-01",
-      "role": "Author",
-      "bullets": [
-        "Set up a Windows Server VM running Active Directory Domain Services.",
-        "Joined Windows 10 clients to the domain, created user accounts, and tested Group Policies.",
-        "Integrated an Azure AD trial tenant for hybrid identity experiments."
-      ],
-      "tech": ["Windows Server", "Active Directory", "Azure AD"]
-    },
-    {
-      "id": 3,
-      "name": "Cloud Foundations Deployment",
-      "start": "2023-05",
-      "role": "Author",
-      "bullets": [
-        "Deployed a small website to both AWS EC2 and Azure App Services.",
-        "Configured IAM and RBAC roles for secure access management.",
-        "Used S3 and Azure Storage to host static content and compared performance."
-      ],
-      "tech": ["AWS", "Azure", "IAM", "RBAC"]
-    },
-    {
-      "id": 4,
-      "name": "Firewall and Intrusion Detection Lab",
-      "start": "2023-06",
-      "role": "Author",
-      "bullets": [
-        "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.",
-        "Configured stateful firewall rules, VLAN segmentation, and port forwarding.",
-        "Integrated Suricata IDS to monitor for malicious traffic patterns.",
-        "Tested security by running controlled nmap scans and logging alerts."
-      ],
-      "tech": ["pfSense", "Suricata", "nmap"]
+      "tech": ["EVE-NG", "OSPF", "SNMP"]
     },
     {
       "id": 5,
@@ -285,17 +249,53 @@
       "tech": ["EVE-NG", "Cisco IOSv", "Ansible", "Grafana"]
     },
     {
-      "id": 6,
-      "name": "Advanced Cisco Enterprise Network Lab",
-      "start": "2025-09",
+      "id": 4,
+      "name": "Firewall and Intrusion Detection Lab",
+      "start": "2023-06",
       "role": "Author",
       "bullets": [
-        "Built an advanced EVE-NG topology simulating a branch office network.",
-        "Configured dynamic routing with OSPF, inter-VLAN routing, and port security.",
-        "Implemented SNMP monitoring and Syslog forwarding.",
-        "Validated resiliency by simulating link failures and verifying failover."
+        "Deployed a pfSense firewall and connected it to both Windows and Linux VMs.",
+        "Configured stateful firewall rules, VLAN segmentation, and port forwarding.",
+        "Integrated Suricata IDS to monitor for malicious traffic patterns.",
+        "Tested security by running controlled nmap scans and logging alerts."
       ],
-      "tech": ["EVE-NG", "OSPF", "SNMP"]
+      "tech": ["pfSense", "Suricata", "nmap"]
+    },
+    {
+      "id": 3,
+      "name": "Cloud Foundations Deployment",
+      "start": "2023-05",
+      "role": "Author",
+      "bullets": [
+        "Deployed a small website to both AWS EC2 and Azure App Services.",
+        "Configured IAM and RBAC roles for secure access management.",
+        "Used S3 and Azure Storage to host static content and compared performance."
+      ],
+      "tech": ["AWS", "Azure", "IAM", "RBAC"]
+    },
+    {
+      "id": 2,
+      "name": "Active Directory & Endpoint Management Lab",
+      "start": "2023-01",
+      "role": "Author",
+      "bullets": [
+        "Set up a Windows Server VM running Active Directory Domain Services.",
+        "Joined Windows 10 clients to the domain, created user accounts, and tested Group Policies.",
+        "Integrated an Azure AD trial tenant for hybrid identity experiments."
+      ],
+      "tech": ["Windows Server", "Active Directory", "Azure AD"]
+    },
+    {
+      "id": 1,
+      "name": "Basic Secure Network Lab",
+      "start": "2022-11",
+      "role": "Author",
+      "bullets": [
+        "Built a small Packet Tracer lab with 2 routers, 2 switches, and multiple VLANs.",
+        "Configured static routing, DHCP, NAT, and ACLs to restrict traffic between VLANs.",
+        "Documented a basic network topology and simulated external internet access."
+      ],
+      "tech": ["Packet Tracer", "DHCP", "NAT", "ACLs"]
     }
   ],
   "service": [],
