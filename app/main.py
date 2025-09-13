@@ -776,29 +776,16 @@ def start() -> Dict[str, Any]:
             /_|_\
            //   \\
           //     \\
-          ||     ||
-          ||     ||
-          ||     ||
-          ||     ||
-         /__\   /__\
+           \\   //
+            \\ //
+             \//
+             VV
+             VV
 """
     text = (
         ascii_art
-        + "\nWelcome to the interactive resume terminal.\n\n"
-        + (
-            "This playful command-line interface lets you explore my professional "
-            "background as if you were navigating a familiar shell. Each section of "
-            "my resume can be opened, paged through, and expanded with simple text "
-            "commands.\n\n"
-            "Try browsing through experience, projects, or education, or jump "
-            "straight to the certifications that validate my skills. Search for "
-            "keywords, reveal details, and discover hidden extras designed to make "
-            "the exploration both informative and fun.\n\n"
-            "Whether you're clicking the shortcut buttons or typing directly into "
-            "the prompt, the goal is to provide a fast and accessible way to get to "
-            "know my work."
-        )
-        + "\n\nType 'help' to explore commands or 'open overview' to begin.\n"
+        + "\nWelcome to the interactive resume terminal.\n"
+        + "Type 'help' for commands or 'open overview' to begin.\n"
         + f"Last updated: {RESUME['meta']['last_updated']}"
     )
     return {"session_id": session_id, "text": text}
