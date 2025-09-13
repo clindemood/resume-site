@@ -40,6 +40,9 @@ async function start() {
   const res = await fetch('/api/start');
   const data = await res.json();
   sessionId = data.session_id;
+  if (data.ascii_art) {
+    print(data.ascii_art, 'ascii');
+  }
   print(data.text);
 }
 
