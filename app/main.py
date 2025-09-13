@@ -307,7 +307,12 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         return {"text": stats + "\nEquipment: " + items}
     if command == "look" and not args:
         return {
-            "text": "A dusky back-room buzzing with tired tech, lit by the glow of misbehaving machines."
+            "text": (
+                "A dusky back-room buzzes with tired tech, lit only by the erratic glow of misbehaving machines. "
+                "Cables sprawl like vines across the floor, linking towers of aging gear that hum and whir in protest. "
+                "The air smells of ozone and burnt coffee, relics of late-night fixes. "
+                "Somewhere a fan sputters, challenging any brave admin to bring order to the chaos."
+            )
         }
     if command == "look" and args:
         target = args[0].lower()
@@ -748,15 +753,22 @@ def start() -> Dict[str, Any]:
     session_id = str(uuid.uuid4())
     sessions[session_id] = {}
     ascii_art = r"""
-      ____________________
-     |  ________________  |
-     | |                | |
-     | |  Tech Terminal | |
-     | |________________| |
-     |____________________|
-      \__________________/
-        |              |
-        |______________|
+                       __====-_  _-====__
+                  _--^^^#####//      \#####^^^--_
+               _-^##########// (    ) \##########^-_
+              -############//  |\^^/|  \############-
+            _/############//   (@::@)   \############\_
+           /#############((     \\//     ))#############\
+          -###############\\    (oo)    //###############-
+         -#################\\  / VV \  //#################-
+        -###################\\/      \//###################-
+       _#/|##########/\######(   /\   )######/\##########|\#_
+       |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/\#| \|
+       `  |/  V  V `   V  \#\| |  | |/#/  V   '  V  V  \|  '
+          `   `  `       `   / |  | \   '      '  '   '
+                            (  |  |  )
+                           __\ |  | /__
+                          (vvv(VVV)vvv)
 """
     text = (
         ascii_art
