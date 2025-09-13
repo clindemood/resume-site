@@ -16,12 +16,12 @@
       "content": "WGU – B.S. Cloud Computing (expected Dec 2024); ACI Learning – Tech Bootcamp.",
       "type": "file"
     },
-    "experience.txt": {
-      "content": "Experience spanning Tier 2 Escalations, Field Technician, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst.",
-      "type": "file"
-    },
-    "projects": {
-      "children": {
+      "experience.txt": {
+        "content": "Experience spanning Tier 2 Escalations, Field Technician II, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst.",
+        "type": "file"
+      },
+      "projects": {
+        "children": {
         "bookmark-backup.txt": {
           "content": "Chrome bookmark backup automation.",
           "type": "file"

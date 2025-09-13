@@ -54,6 +54,16 @@ main {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+a {
+  color: #4ca1af;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #2c3e50;
+  text-decoration: underline;
+}
+
 main.centered {
   display: flex;
   justify-content: center;
