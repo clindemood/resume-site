@@ -1,3 +1,4 @@
+let sessionId;
 const terminal = document.getElementById('terminal');
 const form = document.getElementById('command-form');
 const input = document.getElementById('command');
@@ -7,44 +8,35 @@ function print(text) {
   terminal.scrollTop = terminal.scrollHeight;
 }
 
-async function loadSection(section) {
-  try {
-    const res = await fetch('/' + section);
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const main = doc.querySelector('main');
-    const text = main ? main.textContent.trim() : 'Section not found.';
-    print(text);
-  } catch (err) {
-    print('Error loading section.');
-  }
+async function start() {
+  const res = await fetch('/api/start');
+  const data = await res.json();
+  sessionId = data.session_id;
+  print(data.text);
 }
 
-const commands = {
-  help() {
-    print('Available commands: about, projects, education, resume, clear, help');
-  },
-  clear() {
-    terminal.textContent = '';
-  },
-  about: () => loadSection('about'),
-  projects: () => loadSection('projects'),
-  education: () => loadSection('education'),
-  resume: () => loadSection('resume')
-};
-
-print("Welcome to Chad Lindemood's CLI resume. Type 'help' for commands.");
+async function sendCommand(cmd) {
+  const res = await fetch('/api/command', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: sessionId, command: cmd })
+  });
+  const data = await res.json();
+  print('> ' + cmd);
+  print(data.text);
+}
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-  const cmd = input.value.trim().toLowerCase();
+  const cmd = input.value;
   input.value = '';
-  if (!cmd) return;
-  print('$ ' + cmd);
-  const action = commands[cmd];
-  if (action) {
-    action();
-  } else {
-    print('Unknown command. Type "help" for available commands.');
+  sendCommand(cmd);
+});
+
+document.getElementById('hotkeys').addEventListener('click', e => {
+  if (e.target.dataset.cmd) {
+    sendCommand(e.target.dataset.cmd);
   }
 });
+
+start();
