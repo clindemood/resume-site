@@ -1,89 +1,36 @@
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f7fa;
-  color: #333;
   margin: 0;
-  line-height: 1.6;
   min-height: 100vh;
+  background: #000;
+  color: #0f0;
+  font-family: monospace;
   display: flex;
   flex-direction: column;
 }
 
-header {
-  background: linear-gradient(135deg, #2c3e50, #4ca1af);
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem 0;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-nav a {
-  color: #fff;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-nav a:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-h1,
-h2,
-h3,
-h4 {
-  color: #2c3e50;
-  margin-top: 0;
-}
-
-main {
-  flex: 1;
-  width: 90%;
-  max-width: 900px;
-  margin: 2rem auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
 main.centered {
+  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: none;
-  box-shadow: none;
-}
-
-#game-container {
-  background: #000;
-  color: #0f0;
-  padding: 10px;
-  border-radius: 4px;
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 #terminal {
-  padding: 10px;
-  height: 60vh;
+  width: 80%;
+  max-width: 800px;
+  height: 70vh;
   overflow-y: auto;
-  white-space: pre-wrap;
-  background: #000;
-  font-family: monospace;
+  padding: 10px;
   border: 1px solid #0f0;
+  white-space: pre-wrap;
 }
 
 #command-form {
   display: flex;
-  padding: 10px 0;
+  width: 80%;
+  max-width: 800px;
+  padding-top: 10px;
 }
 
 #command {
@@ -92,29 +39,9 @@ main.centered {
   color: #0f0;
   border: none;
   outline: none;
-  font-family: monospace;
-}
-
-button {
-  margin-right: 5px;
-  background: #111;
-  color: #0f0;
-  border: 1px solid #0f0;
-  font-family: monospace;
-  border-radius: 4px;
-  padding: 4px 8px;
-  transition: background 0.2s, color 0.2s;
-}
-
-button:hover {
-  background: #0f0;
-  color: #000;
 }
 
 footer {
-  background: #2c3e50;
-  color: #fff;
   text-align: center;
   padding: 1rem 0;
 }
-
