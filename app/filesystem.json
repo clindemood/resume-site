@@ -1,59 +1,59 @@
 {
-  "type": "dir",
   "children": {
     "about.txt": {
-      "type": "file",
-      "content": "Chad Lindemood is an IT professional specializing in cloud and systems administration, endpoint management, and network security."
-    },
-      "skills": {
-        "type": "dir",
-        "children": {
-          "cloud.txt": {
-            "type": "file",
-            "content": "Azure, Active Directory, Windows Server, VMware ESXi."
-          },
-          "endpoint.txt": {
-            "type": "file",
-            "content": "Microsoft Intune, Autopilot, PowerShell scripting."
-          },
-          "network.txt": {
-            "type": "file",
-            "content": "SonicWall, Sophos, VPN, UniFi, Veeam backups."
-          },
-          "collab.txt": {
-            "type": "file",
-            "content": "Microsoft Teams Rooms, Office Suite."
-          }
-        }
-      },
-      "experience.txt": {
-        "type": "file",
-        "content": "Experience spanning Tier 2 Escalations, Field Technician, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst."
-      },
-    "projects": {
-      "type": "dir",
-      "children": {
-        "device-tracker.txt": {
-          "type": "file",
-          "content": "PowerShell scripts for device tracking."
-        },
-        "bookmark-backup.txt": {
-          "type": "file",
-          "content": "Chrome bookmark backup automation."
-        }
-      }
-    },
-    "education.txt": {
-      "type": "file",
-      "content": "WGU – B.S. Cloud Computing (expected Dec 2024); ACI Learning – Tech Bootcamp."
+      "content": "Chad Lindemood is an IT professional specializing in cloud and systems administration, endpoint management, and network security.",
+      "type": "file"
     },
     "certifications.txt": {
-      "type": "file",
-      "content": "Azure Administrator, AWS Cloud Practitioner, CompTIA A+, Network+, Security+, ITIL 4."
+      "content": "Azure Administrator, AWS Cloud Practitioner, CompTIA A+, Network+, Security+, ITIL 4.",
+      "type": "file"
     },
     "contact.txt": {
-      "type": "file",
-      "content": "Reach Chad at chad.lindemood@gmail.com or (765) 470-3525 in Canal Fulton, OH."
+      "content": "Reach Chad at chad.lindemood@gmail.com or (765) 470-3525 in Canal Fulton, OH.",
+      "type": "file"
+    },
+    "education.txt": {
+      "content": "WGU – B.S. Cloud Computing (expected Dec 2024); ACI Learning – Tech Bootcamp.",
+      "type": "file"
+    },
+    "experience.txt": {
+      "content": "Experience spanning Tier 2 Escalations, Field Technician, IT Service Desk roles, Stay-at-Home Father, Flooring Installer, and Signals Intelligence Analyst.",
+      "type": "file"
+    },
+    "projects": {
+      "children": {
+        "bookmark-backup.txt": {
+          "content": "Chrome bookmark backup automation.",
+          "type": "file"
+        },
+        "device-tracker.txt": {
+          "content": "PowerShell scripts for device tracking.",
+          "type": "file"
+        }
+      },
+      "type": "dir"
+    },
+    "skills": {
+      "children": {
+        "cloud.txt": {
+          "content": "Azure, Active Directory, Windows Server, VMware ESXi.",
+          "type": "file"
+        },
+        "collab.txt": {
+          "content": "Microsoft Teams Rooms, Office Suite.",
+          "type": "file"
+        },
+        "endpoint.txt": {
+          "content": "Microsoft Intune, Autopilot, PowerShell scripting.",
+          "type": "file"
+        },
+        "network.txt": {
+          "content": "SonicWall, Sophos, VPN, UniFi, Veeam backups.",
+          "type": "file"
+        }
+      },
+      "type": "dir"
     }
-  }
+  },
+  "type": "dir"
 }
