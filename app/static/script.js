@@ -53,7 +53,13 @@ async function sendCommand(cmd) {
   if (data.clear) {
     terminal.textContent = '';
   }
-  print(data.text, data.error ? 'error' : 'output');
+  if (Array.isArray(data.lines)) {
+    data.lines.forEach((line, idx) => {
+      setTimeout(() => print(line, data.error ? 'error' : 'output'), idx * 300);
+    });
+  } else {
+    print(data.text, data.error ? 'error' : 'output');
+  }
 }
 
 // Handle manual command entry
