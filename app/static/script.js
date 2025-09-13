@@ -14,8 +14,8 @@ function escapeHtml(text) {
 // Add simple syntax highlighting to imitate IDE colour schemes
 function colorize(text) {
   return escapeHtml(text)
-    .replace(/https?:\/\/[^\s]+/g, '<a href="$&" class="link" target="_blank">$&</a>')
-    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<a href="mailto:$&" class="link" target="_blank">$&</a>')
+    .replace(/https?:\/\/[^\s]+/g, '<span class="link">$&</span>')
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<span class="link">$&</span>')
     .replace(/\[(.*?)\]/g, '<span class="bracket">[$1]</span>')
     .replace(/\b([A-Za-z_]+):/g, '<span class="label">$1:</span>')
     .replace(/\b\d+\b/g, '<span class="number">$&</span>')
