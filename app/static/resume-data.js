@@ -53,8 +53,6 @@ export async function loadEducation() {
       const li = document.createElement('li');
       const details = [];
       if (c.issuer) details.push(c.issuer);
-      if (c.issued) details.push(`Issued ${formatDate(c.issued)}`);
-      if (c.expires) details.push(`Expires ${formatDate(c.expires)}`);
       if (c.credential_id) details.push(`ID ${c.credential_id}`);
       li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
       certList.appendChild(li);
@@ -123,8 +121,6 @@ export async function loadResume() {
       const li = document.createElement('li');
       const details = [];
       if (c.issuer) details.push(c.issuer);
-      if (c.issued) details.push(`Issued ${formatDate(c.issued)}`);
-      if (c.expires) details.push(`Expires ${formatDate(c.expires)}`);
       if (c.credential_id) details.push(`ID ${c.credential_id}`);
       li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
       certUl.appendChild(li);

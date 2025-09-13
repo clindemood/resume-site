@@ -139,7 +139,7 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
             lines.append(render_details(section, item))
     hint = " • type 'next' to see more" if page < total_pages else ""
     lines.append(
-        f"Page {page}/{total_pages} • use 'show <id>' or 'expand <id>'{hint}"
+        f"Page {page}/{total_pages} • use 'show <id>'{hint}"
     )
     return "\n".join(lines)
 
@@ -288,6 +288,13 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         ),
     }
 
+    def match_key(name: str, mapping: Dict[str, Any]) -> str | None:
+        name = name.lower()
+        for key in mapping:
+            if key.startswith(name):
+                return key
+        return None
+
     if command == "exit":
         state.pop("mode", None)
         return {"text": "You leave the secret admin arena."}
@@ -297,49 +304,78 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         return {"text": "Equipment: " + ", ".join(eq) if eq else "You carry only your wits."}
     if command == "look" and args:
         target = args[0].lower()
-        if target in enemy_descriptions:
-            return {"text": enemy_descriptions[target]}
-        if target in item_descriptions:
-            return {"text": item_descriptions[target]}
+        key = match_key(target, enemy_descriptions) or match_key(target, item_descriptions)
+        if key in enemy_descriptions:
+            return {"text": enemy_descriptions[key]}
+        if key in item_descriptions:
+            return {"text": item_descriptions[key]}
         return {"text": "Nothing noteworthy."}
 
     if command == "attack" and args:
-        target = args[0].lower()
-        if target not in game["enemy_hp"]:
+        target_key = match_key(args[0], game["enemy_hp"])
+        if not target_key:
             return {"text": "Unknown target."}
-        if target in defeated:
-            return {"text": f"The {target} has already been defeated."}
-        enemy_hp = game["enemy_hp"][target]
+        if target_key in defeated:
+            return {"text": f"The {target_key} has already been defeated."}
+        enemy_hp = game["enemy_hp"][target_key]
         player_hp = game["player_hp"]
         lines: List[str] = []
+        player_flavor = {
+            "printer": [
+                "You threaten it with a paperless office for {dmg} damage!",
+                "You hurl recycled memes causing {dmg} damage!",
+            ],
+            "server": [
+                "You deploy a surprise patch dealing {dmg} damage!",
+                "You overload it with regex loops for {dmg} damage!",
+            ],
+            "mdf": [
+                "You untangle cables at lightspeed for {dmg} damage!",
+                "You swing a Cat5 like a whip for {dmg} damage!",
+            ],
+        }
+        enemy_flavor = {
+            "printer": [
+                "It pelts you with toner dust for {dmg} damage!",
+                "Paper jams explode for {dmg} damage!",
+            ],
+            "server": [
+                "It launches a denial-of-service sneeze for {dmg} damage!",
+                "Fan noise drills into you for {dmg} damage!",
+            ],
+            "mdf": [
+                "A rogue spark zaps you for {dmg} damage!",
+                "Patch panels rain down for {dmg} damage!",
+            ],
+        }
         while enemy_hp > 0 and player_hp > 0:
             player_hit = random.randint(4, 8)
             enemy_hp -= player_hit
-            lines.append(f"You strike the {target} for {player_hit} damage!")
-            lines.append(f"{target.capitalize()} HP: {max(enemy_hp,0)}")
+            lines.append(random.choice(player_flavor[target_key]).format(dmg=player_hit))
+            lines.append(f"{target_key.capitalize()} HP: {max(enemy_hp,0)}")
             if enemy_hp <= 0:
-                defeated.add(target)
+                defeated.add(target_key)
                 loot = {
                     "printer": "Mouse of Many Clicks",
                     "server": "shimmering Tech Aura",
                     "mdf": "Cat5 of Ninetails",
-                }[target]
+                }[target_key]
                 game["equipment"].append(loot)
-                lines.append(f"The {target} collapses! Loot: {loot}.")
-                game["enemy_hp"][target] = 0
+                lines.append(f"The {target_key} blue-screens! Loot: {loot}.")
+                game["enemy_hp"][target_key] = 0
                 break
             enemy_hit = random.randint(1, 5)
             player_hp -= enemy_hit
-            lines.append(f"The {target} retaliates for {enemy_hit}!")
+            lines.append(random.choice(enemy_flavor[target_key]).format(dmg=enemy_hit))
             lines.append(f"Your HP: {max(player_hp,0)}")
         game["player_hp"] = player_hp
-        game["enemy_hp"][target] = max(enemy_hp, 0)
+        game["enemy_hp"][target_key] = max(enemy_hp, 0)
         if player_hp <= 0:
             state.pop("mode", None)
             lines.append("You collapse in a heap of patch cables. Game over.")
         elif {"printer", "server", "mdf"} <= defeated:
             lines.append("All foes vanquished! You are the supreme admin.")
-        return {"text": "\n".join(lines)}
+        return {"text": "\n".join(lines), "lines": lines}
 
     return {
         "text": "Commands: attack|atk <target>, look|l <target>, equipment|eq, exit|q"
@@ -702,9 +738,18 @@ def start() -> Dict[str, Any]:
     session_id = str(uuid.uuid4())
     sessions[session_id] = {}
     variants = " • ".join(RESUME.get("versions", []))
+    ascii_art = r"""
+  ____                          _                 
+ |  _ \ ___  ___ ___  _ __   | |_ ___  _ __     
+ | |_) / _ \/ __/ _ \| '_ \  | __/ _ \| '__|    
+ |  _ <  __/ (_| (_) | | | | | || (_) | |       
+ |_| \_\___|\___\___/|_| |_|  \__\___/|_|       
+"""
     text = (
-        "Short usage hint: type 'help' or 'open overview'\n"
-        f"Last updated: {RESUME['meta']['last_updated']} | Available variants: {variants}"
+        ascii_art
+        + "\nWelcome to the interactive resume terminal."
+        + "\nType 'help' to explore commands or 'open overview' to begin.\n"
+        + f"Last updated: {RESUME['meta']['last_updated']} | Variants: {variants}"
     )
     return {"session_id": session_id, "text": text}
 
