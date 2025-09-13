@@ -1,46 +1,402 @@
+"""Interactive resume CLI backend.
+
+This module implements a small web API used by a browser based
+"terminal".  It exposes a handful of endpoints that provide the
+behaviour of the command set described in the user instructions.
+The implementation is intentionally lightweight; the goal is to
+provide an approachable demonstration rather than a fully fledged
+resume management system.
+"""
+
+from __future__ import annotations
+
 import json
+import shlex
 import uuid
 from pathlib import Path
+from typing import Any, Dict, List
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+# ---------------------------------------------------------------------------
+# Data loading
+# ---------------------------------------------------------------------------
+
+APP_DIR = Path(__file__).parent
+DATA_PATH = APP_DIR / "resume.json"
+
+with DATA_PATH.open() as f:
+    RESUME: Dict[str, Any] = json.load(f)
+
+STATIC_DIR = APP_DIR / "static"
+
+# ---------------------------------------------------------------------------
+# FastAPI setup
+# ---------------------------------------------------------------------------
+
 app = FastAPI()
-
-# Load virtual filesystem data
-FS_PATH = Path(__file__).parent / "filesystem.json"
-with FS_PATH.open() as f:
-    FS = json.load(f)
-
-
-def get_node(path: list[str]) -> dict | None:
-    """Traverse the filesystem dictionary following ``path``."""
-    node = FS
-    for part in path:
-        node = node.get("children", {}).get(part)
-        if not node:
-            return None
-    return node
-
-
-def list_dir(path: list[str]) -> str:
-    node = get_node(path)
-    if not node or node.get("type") != "dir":
-        return "Not a directory."
-    items = []
-    for name, child in sorted(node.get("children", {}).items()):
-        items.append(name + ("/" if child.get("type") == "dir" else ""))
-    return "\n".join(items)
-
-
-# Serve static files
-STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-# In-memory session store
-sessions: dict[str, dict] = {}
+# ---------------------------------------------------------------------------
+# Session state
+# ---------------------------------------------------------------------------
 
+# Each session keeps track of the current section view, pagination state,
+# and auxiliary data such as expanded items or user notes.
+sessions: Dict[str, Dict[str, Any]] = {}
+
+ITEMS_PER_PAGE = 3
+
+# ---------------------------------------------------------------------------
+# Helper formatting utilities
+# ---------------------------------------------------------------------------
+
+def format_overview() -> str:
+    o = RESUME.get("overview", {})
+    lines = [
+        f"Name: {o.get('name')} | {o.get('title')} | {o.get('location')}",
+        f"Email: {o.get('email')} | Web: {o.get('web')} | LinkedIn: {o.get('linkedin')}",
+        f"Summary: {o.get('summary')}",
+    ]
+    return "\n".join(lines)
+
+
+def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, page: int = 1) -> str:
+    """Return a textual representation for ``section``.
+
+    The state is updated with pagination information so that commands like
+    ``next``/``prev`` can operate on the last view.
+    """
+
+    items: List[Dict[str, Any]] = RESUME.get(section, [])
+    if not isinstance(items, list):
+        if section == "overview":
+            state["current_section"] = section
+            state["last_items"] = {}
+            state["page"] = 1
+            return format_overview()
+        return "Unknown section."
+
+    total_pages = max(1, (len(items) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE)
+    page = max(1, min(page, total_pages))
+    start = (page - 1) * ITEMS_PER_PAGE
+    end = start + ITEMS_PER_PAGE
+    page_items = items[start:end]
+
+    state["current_section"] = section
+    state["page"] = page
+    state["last_items"] = {str(i): item for i, item in enumerate(page_items, start=start + 1)}
+
+    lines: List[str] = []
+    for idx, item in state["last_items"].items():
+        if section == "experience":
+            base = f"[{idx}] {item['company']} | {item['role']} | {item['start']}–{item.get('end', 'Present')} | {item['location']}"
+        elif section == "projects":
+            base = f"[{idx}] {item['name']}"
+        elif section == "skills":
+            base = f"[{idx}] {item['name']} ({item.get('level')})"
+        elif section == "education":
+            base = f"[{idx}] {item['institution']} | {item['degree']} | {item['year']}"
+        else:
+            base = f"[{idx}] {item.get('name', 'item')}"
+        lines.append(base)
+        if expand:
+            lines.append(render_details(section, item))
+    lines.append(f"Page {page}/{total_pages} • use 'show <id>' or 'expand <id>'")
+    return "\n".join(lines)
+
+
+def render_details(section: str, item: Dict[str, Any]) -> str:
+    if section == "experience":
+        lines = [
+            f"Company: {item['company']}",
+            f"Role: {item['role']}",
+            f"Dates: {item['start']} → {item.get('end', 'Present')}",
+            "Highlights:",
+        ]
+        lines.extend([f"- {b}" for b in item.get("bullets", [])])
+        if tech := item.get("tech"):
+            lines.append("Tech: " + ", ".join(tech))
+        return "\n".join(lines)
+    if section == "projects":
+        lines = [f"Name: {item['name']}", f"Role: {item['role']}" ]
+        if repo := item.get("repo"):
+            lines.append(f"Repo: {repo}")
+        if tech := item.get("tech"):
+            lines.append("Tech: " + ", ".join(tech))
+        if outcome := item.get("outcome"):
+            lines.append(f"Outcome: {outcome}")
+        return "\n".join(lines)
+    if section == "skills":
+        return f"{item['name']} ({item.get('level')})"
+    if section == "education":
+        return f"{item['degree']} at {item['institution']} ({item['year']})"
+    return ""
+
+
+def search_resume(query: str, section: str | None = None) -> List[str]:
+    query = query.lower()
+    sections = [section] if section else [k for k, v in RESUME.items() if isinstance(v, list)]
+    results: List[str] = []
+    for sec in sections:
+        items = RESUME.get(sec, [])
+        for item in items:
+            blob = json.dumps(item).lower()
+            if query in blob:
+                label = item.get("company") or item.get("name") or str(item.get("id"))
+                results.append(f"[{sec}] {label}")
+    return results
+
+# ---------------------------------------------------------------------------
+# Command handlers
+# ---------------------------------------------------------------------------
+
+def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
+    """Return response dict for ``cmd`` executed in ``state``."""
+
+    if not cmd:
+        return {"text": ""}
+
+    parts = shlex.split(cmd)
+    command = parts[0]
+    args = parts[1:]
+
+    # Basic navigation -----------------------------------------------------
+    if command == "help":
+        return {"text": HELP_TEXT if not args else COMMAND_HELP.get(args[0], "No help available.")}
+
+    if command == "open" and args:
+        section = args[0]
+        expand = "--expand" in args
+        page = 1
+        if "--page" in args:
+            try:
+                idx = args.index("--page")
+                page = int(args[idx + 1])
+            except (ValueError, IndexError):
+                pass
+        text = list_section(state, section, expand=expand, page=page)
+        state.setdefault("history", []).append(cmd)
+        return {"text": text}
+
+    if command == "show" and args:
+        item = state.get("last_items", {}).get(args[0])
+        if not item:
+            return {"text": "Unknown id."}
+        section = state.get("current_section")
+        return {"text": render_details(section, item)}
+
+    if command in {"next", "prev"}:
+        section = state.get("current_section")
+        if not section:
+            return {"text": "Nothing to paginate."}
+        page = state.get("page", 1) + (1 if command == "next" else -1)
+        text = list_section(state, section, page=page)
+        return {"text": text}
+
+    if command == "back":
+        hist = state.get("history", [])
+        if len(hist) > 1:
+            hist.pop()  # remove current
+            prev = hist.pop()
+            return handle_command(state, prev)
+        state.clear()
+        return {"text": ""}
+
+    # Discovery -----------------------------------------------------------
+    if command == "search" and args:
+        section = None
+        if "--in" in args:
+            try:
+                idx = args.index("--in")
+                section = args[idx + 1]
+            except IndexError:
+                pass
+        query = args[0]
+        hits = search_resume(query, section)
+        if not hits:
+            return {"text": "No matches."}
+        return {"text": "\n".join(hits)}
+
+    if command == "filter" and args:
+        # Very small filter implementation: filter <section> field=value
+        sec = args[0] if args[0] in RESUME else state.get("current_section")
+        exprs = args[1:] if sec == args[0] else args
+        items = RESUME.get(sec, [])
+        if not isinstance(items, list):
+            return {"text": "Unknown section."}
+        results = items
+        for expr in exprs:
+            if "=" in expr:
+                field, value = expr.split("=", 1)
+                field = field.strip()
+                value = value.strip()
+                results = [i for i in results if str(i.get(field, "")).lower() == value.lower()]
+        lines = []
+        for item in results:
+            label = item.get("company") or item.get("name")
+            lines.append(label)
+        return {"text": "Matches: " + ", ".join(lines) if lines else "No matches."}
+
+    if command == "timeline":
+        sec = "experience"
+        if "--section" in args:
+            try:
+                idx = args.index("--section")
+                sec = args[idx + 1]
+            except IndexError:
+                pass
+        items = RESUME.get(sec, [])
+        lines = [
+            " → ".join(
+                f"{i.get('start')}–{i.get('end', 'Present')} {i.get('company', i.get('name'))}" for i in items
+            )
+        ]
+        return {"text": "".join(lines)}
+
+    if command == "skills":
+        level = None
+        tags: List[str] | None = None
+        if "--level" in args:
+            try:
+                level = args[args.index("--level") + 1]
+            except IndexError:
+                pass
+        if "--tag" in args:
+            try:
+                tags = [t.strip() for t in args[args.index("--tag") + 1].split(",")]
+            except IndexError:
+                pass
+        skills = RESUME.get("skills", [])
+        out = []
+        for s in skills:
+            if level and s.get("level") != level:
+                continue
+            if tags and not set(tags) & set(s.get("tags", [])):
+                continue
+            out.append(f"{s['name']} ({s.get('level')})")
+        return {"text": " • ".join(out) if out else "No skills match."}
+
+    if command == "contact":
+        o = RESUME.get("overview", {})
+        return {"text": f"Email: {o.get('email')} | Phone: (N/A) | Web: {o.get('web')}"}
+
+    if command == "copy" and args:
+        field = args[0]
+        o = RESUME.get("overview", {})
+        value = o.get(field)
+        if not value:
+            return {"text": "Unknown field."}
+        return {"text": f"Copied {field}: {value}"}
+
+    if command == "share":
+        return {"text": "Public link: https://example.com/r/jordan-patel/engineering"}
+
+    if command == "download":
+        filename = "resume.txt"
+        if "--filename" in args:
+            try:
+                filename = args[args.index("--filename") + 1]
+            except IndexError:
+                pass
+        return {"text": f"Download started: {filename}"}
+
+    if command == "versions":
+        versions = RESUME.get("versions", [])
+        if "--list" in args or not args:
+            return {"text": " • ".join(versions) + f" • last_updated: {RESUME['meta']['last_updated']}"}
+        if "--diff" in args:
+            return {"text": "Diff not implemented."}
+
+    if command == "tags":
+        tags = state.setdefault("tags", {})
+        if "--list" in args:
+            listing = [f"{k}: {', '.join(v)}" for k, v in tags.items()]
+            return {"text": "\n".join(listing) if listing else "No tags."}
+        if "--add" in args:
+            try:
+                idx = args.index("--add")
+                id_, tag = args[idx + 1], args[idx + 2]
+                tags.setdefault(id_, []).append(tag)
+                return {"text": f"Tag '{tag}' added to {id_}."}
+            except IndexError:
+                return {"text": "Usage: tags --add <id> <tag>"}
+        if "--remove" in args:
+            try:
+                idx = args.index("--remove")
+                id_, tag = args[idx + 1], args[idx + 2]
+                if tag in tags.get(id_, []):
+                    tags[id_].remove(tag)
+                return {"text": f"Tag '{tag}' removed from {id_}."}
+            except IndexError:
+                return {"text": "Usage: tags --remove <id> <tag>"}
+        return {"text": "Usage: tags --list|--add|--remove"}
+
+    if command == "notes":
+        notes = state.setdefault("notes", {})
+        if "--add" in args:
+            try:
+                idx = args.index("--add")
+                id_, text = args[idx + 1], args[idx + 2]
+                notes.setdefault(id_, []).append(text)
+                return {"text": "Note added."}
+            except IndexError:
+                return {"text": "Usage: notes --add <id> 'text'"}
+        if "--show" in args:
+            try:
+                idx = args.index("--show")
+                id_ = args[idx + 1]
+                return {"text": " | ".join(notes.get(id_, [])) or "No notes."}
+            except IndexError:
+                return {"text": "Usage: notes --show <id>"}
+        return {"text": "Usage: notes --add|--show"}
+
+    if command == "print":
+        mode = "compact"
+        if "--detailed" in args:
+            mode = "detailed"
+        return {"text": f"Printing in {mode} mode..."}
+
+    if command == "theme" and args:
+        theme = args[0]
+        state["theme"] = theme
+        return {"text": f"Theme set to {theme}."}
+
+    if command == "about":
+        meta = RESUME.get("meta", {})
+        return {
+            "text": f"Resume data from {meta.get('data_source')} • last_updated: {meta.get('last_updated')}"
+        }
+
+    if command == "clear":
+        return {"text": "", "clear": True}
+
+    if command == "quit":
+        return {"text": "Goodbye."}
+
+    return {"text": "Unknown command."}
+
+# ---------------------------------------------------------------------------
+# Help text
+# ---------------------------------------------------------------------------
+
+HELP_TEXT = (
+    "Commands: help, open <section>, show <id>, next, prev, back, search <q>, "
+    "filter [section] field=value, timeline, skills, contact, copy <field>, "
+    "share, download, versions, tags, notes, print, theme, about, clear, quit"
+)
+
+COMMAND_HELP = {
+    "open": "open <section> [--expand] [--page N] — show a section.",
+    "show": "show <id> — open one item by its ID from the last listing.",
+    "search": "search <query> [--in <section>] — full-text search.",
+}
+
+# ---------------------------------------------------------------------------
+# HTTP routes
+# ---------------------------------------------------------------------------
 
 @app.get("/", response_class=FileResponse)
 def index() -> FileResponse:
@@ -68,60 +424,23 @@ def resume() -> FileResponse:
 
 
 @app.get("/api/start")
-def start():
+def start() -> Dict[str, Any]:
     """Start a new CLI session."""
     session_id = str(uuid.uuid4())
-    sessions[session_id] = {"cwd": []}
+    sessions[session_id] = {}
+    variants = " • ".join(RESUME.get("versions", []))
     text = (
-        "Welcome to the resume CLI. Type 'help' for commands."
+        "Short usage hint: type 'help' or 'open overview'\n"
+        f"Last updated: {RESUME['meta']['last_updated']} | Available variants: {variants}"
     )
     return {"session_id": session_id, "text": text}
 
 
 @app.post("/api/command")
-async def command(payload: dict):
+async def command(payload: Dict[str, Any]) -> Dict[str, Any]:
     session_id = payload.get("session_id")
     cmd = payload.get("command", "").strip()
     state = sessions.get(session_id)
-    if not state:
+    if state is None:
         return {"text": "Invalid session."}
-
-    cwd = state["cwd"]
-    text = ""
-
-    if cmd == "ls":
-        text = list_dir(cwd)
-    elif cmd.startswith("cd "):
-        arg = cmd.split(maxsplit=1)[1]
-        if arg == "..":
-            if cwd:
-                cwd.pop()
-            text = list_dir(cwd)
-        elif arg == "/":
-            state["cwd"] = []
-            text = list_dir(state["cwd"])
-        else:
-            node = get_node(cwd)
-            child = node.get("children", {}).get(arg) if node else None
-            if child and child.get("type") == "dir":
-                cwd.append(arg)
-                text = list_dir(cwd)
-            else:
-                text = "Not a directory."
-    elif cmd == "pwd":
-        text = "/" + "/".join(cwd)
-    elif cmd.startswith("cat "):
-        filename = cmd.split(maxsplit=1)[1]
-        node = get_node(cwd)
-        child = node.get("children", {}).get(filename) if node else None
-        if child and child.get("type") == "file":
-            text = child.get("content", "")
-        else:
-            text = "No such file."
-    elif cmd == "help":
-        text = "Commands: ls, cd <dir>, cd .., pwd, cat <file>, help"
-    else:
-        text = "Unknown command."
-
-    return {"text": text}
-
+    return handle_command(state, cmd)
