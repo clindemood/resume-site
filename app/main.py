@@ -54,14 +54,24 @@ ITEMS_PER_PAGE = 5
 # Helper formatting utilities
 # ---------------------------------------------------------------------------
 
-def format_date(value: str | None) -> str:
+def format_date(value: str | None, short: bool = False) -> str:
     if not value:
         return "Present"
     try:
         dt = datetime.strptime(value, "%Y-%m")
-        return f"{dt.month} {dt.year}"
+        month, day = dt.month, 1
     except ValueError:
-        return value
+        try:
+            dt = datetime.strptime(value, "%Y-%m-%d")
+            month, day = dt.month, dt.day
+        except ValueError:
+            return value
+    year = dt.year % 100 if short else dt.year
+    return f"{month}/{day}/{year}"
+
+
+def strip_scheme(url: str | None) -> str:
+    return url.replace("https://", "").replace("http://", "") if url else ""
 
 
 def format_overview() -> str:
@@ -69,8 +79,8 @@ def format_overview() -> str:
     lines = [
         f"Name: {o.get('name')} | {o.get('title')} | {o.get('location')}",
         (
-            f"Email: {o.get('email')} | Web: {o.get('web')} | "
-            f"LinkedIn: {o.get('linkedin')} | GitHub: {o.get('github')}"
+            f"Email: {o.get('email')} | Web: {strip_scheme(o.get('web'))} | "
+            f"LinkedIn: {strip_scheme(o.get('linkedin'))} | GitHub: {strip_scheme(o.get('github'))}"
         ),
         f"Summary: {o.get('summary')}",
     ]
@@ -108,7 +118,7 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
         if section == "experience":
             base = (
                 f"[{idx}] {item['company']} | {item['role']} | "
-                f"{format_date(item['start'])}–{format_date(item.get('end'))} | {item['location']}"
+                f"{format_date(item['start'])} - {format_date(item.get('end'), True)} | {item['location']}"
             )
         elif section == "projects":
             base = f"[{idx}] {item['name']}"
@@ -133,7 +143,7 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
         lines = [
             f"Company: {item['company']}",
             f"Role: {item['role']}",
-            f"Dates: {format_date(item['start'])} → {format_date(item.get('end'))}",
+            f"Dates: {format_date(item['start'])} - {format_date(item.get('end'), True)}",
             "Highlights:",
         ]
         lines.extend([f"- {b}" for b in item.get("bullets", [])])
@@ -338,7 +348,7 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         items = RESUME.get(sec, [])
         lines = [
             " → ".join(
-                f"{format_date(i.get('start'))}–{format_date(i.get('end'))} {i.get('company', i.get('name'))}"
+                f"{format_date(i.get('start'))} - {format_date(i.get('end'), True)} {i.get('company', i.get('name'))}"
                 for i in items
             )
         ]
