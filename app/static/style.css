@@ -75,6 +75,13 @@ main.centered {
 
 .cli-title {
   margin-bottom: 1rem;
+  font-family: monospace;
+  color: #33ff33;
+  background: #000;
+  padding: 0.5rem 1rem;
+  border: 1px solid #00ffff;
+  display: inline-block;
+  text-shadow: 0 0 5px #33ff33;
 }
 
 /* CLI container styling */
