@@ -1,0 +1,37 @@
+{
+  "entrance": {
+    "name": "Entrance Hall",
+    "description": "You stand in a dimly lit foyer. Exits lead north to About, east to Skills, west to Experience, south to Contact.",
+    "exits": {"north": "about", "east": "skills", "west": "experience", "south": "contact"}
+  },
+  "about": {
+    "name": "About",
+    "description": "I am an enthusiastic developer passionate about building interactive experiences.",
+    "exits": {"south": "entrance", "east": "education"}
+  },
+  "skills": {
+    "name": "Skills",
+    "description": "Proficient with Python, JavaScript, and crafting web adventures.",
+    "exits": {"west": "entrance", "south": "certifications"}
+  },
+  "education": {
+    "name": "Education",
+    "description": "B.S. in Computer Science from Example University.",
+    "exits": {"west": "about"}
+  },
+  "experience": {
+    "name": "Experience",
+    "description": "Previously built numerous applications and guided teams through quests.",
+    "exits": {"east": "entrance"}
+  },
+  "contact": {
+    "name": "Contact",
+    "description": "You can reach me at hero@example.com.",
+    "exits": {"north": "entrance"}
+  },
+  "certifications": {
+    "name": "Certifications",
+    "description": "Certified Python Professional, Cloud Adventurer.",
+    "exits": {"north": "skills"}
+  }
+}
