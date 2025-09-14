@@ -67,5 +67,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on formatting JSON and sub
 
 ## Deployment
 
-Deployment options and AWS hosting instructions are covered in [DEPLOYMENT.md](DEPLOYMENT.md).
+Azure hosting instructions are covered in [DEPLOYMENT.md](DEPLOYMENT.md). For a quick deployment using the Azure CLI:
+
+```bash
+az group create --name resume-rg --location eastus
+az acr create --resource-group resume-rg --name resumeRegistry --sku Basic
+az acr build --registry resumeRegistry --image resume-site:latest .
+az webapp create --plan resume-plan --resource-group resume-rg --name resume-app --deployment-container-image-name resumeregistry.azurecr.io/resume-site:latest
+```
+
+See the deployment guide for details on Azure Container Apps and other options.
 

@@ -1,6 +1,6 @@
 # Deployment
 
-This project can be hosted on Microsoft Azure using container-based services. The instructions below use Azure Container Registry (ACR), Azure Container Apps, Azure DNS, and Azure CLI commands. Terraform equivalents are included for those preferring infrastructure as code.
+This project can be hosted on Microsoft Azure using container-based services such as Azure Container Apps or Azure App Service. The instructions below use Azure Container Registry (ACR), Azure Container Apps, Azure DNS, and Azure CLI commands. Terraform equivalents are included for those preferring infrastructure as code.
 
 ## Prerequisites
 

@@ -226,7 +226,7 @@
       "bullets": [
         "Created an interactive lab using AI tools to build a resume-focused website.",
         "Containerized the application with Docker and orchestrated it using Kubernetes.",
-        "Deployed the site to AWS for public access and scalability testing.",
+        "Deployed the site to Azure for public access and scalability testing.",
         "This is that website!"
       ],
       "id": 7,
@@ -237,7 +237,7 @@
         "AI tools",
         "Docker",
         "Kubernetes",
-        "AWS"
+        "Azure"
       ]
     },
     {
@@ -275,17 +275,17 @@
     },
     {
       "bullets": [
-        "Deployed a small website to both AWS EC2 and Azure App Services.",
+        "Deployed a small website to Azure App Service.",
         "Configured IAM and RBAC roles for secure access management.",
-        "Used S3 and Azure Storage to host static content and compared performance."
+        "Used Azure Storage to host static content and compared performance."
       ],
       "id": 3,
       "name": "Cloud Foundations Deployment",
       "role": "Author",
       "start": "2023-05",
       "tech": [
-        "AWS",
-        "Azure",
+        "Azure App Service",
+        "Azure Storage",
         "IAM",
         "RBAC"
       ]
