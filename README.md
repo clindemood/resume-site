@@ -15,6 +15,8 @@ This repository powers an interactive resume and portfolio site built with FastA
    ```
 3. Visit <http://localhost:8000/> to browse the site.
 
+For a more detailed walkthrough of local setup and available pages, see [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md).
+
 ## Running with Docker
 
 1. Build the image:
