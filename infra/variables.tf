@@ -1,30 +1,50 @@
-variable "aws_region" {
-  description = "AWS region to deploy resources"
+variable "subscription_id" {
+  description = "Azure subscription ID."
   type        = string
 }
 
-variable "aws_account_id" {
-  description = "AWS account ID used for constructing repository URLs"
+variable "tenant_id" {
+  description = "Azure tenant ID."
+  type        = string
+}
+
+variable "client_id" {
+  description = "Azure client ID for authentication."
+  type        = string
+}
+
+variable "client_secret" {
+  description = "Azure client secret for authentication."
+  type        = string
+  sensitive   = true
+}
+
+variable "location" {
+  description = "Azure region to deploy resources."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "Name of the resource group to create or use."
+  type        = string
+}
+
+variable "registry_name" {
+  description = "Name for the Azure Container Registry."
+  type        = string
+}
+
+variable "app_name" {
+  description = "Name of the App Service."
+  type        = string
+}
+
+variable "log_storage_account_name" {
+  description = "Name of the storage account for logs."
   type        = string
 }
 
 variable "domain_name" {
-  description = "Domain name for Route53 record"
+  description = "Domain name for the DNS zone."
   type        = string
-}
-
-variable "certificate_arn" {
-  description = "ARN of the ACM certificate for HTTPS"
-  type        = string
-}
-
-variable "session_redis_url" {
-  description = "ARN of the secret or SSM parameter containing the Redis URL for session storage"
-  type        = string
-}
-
-variable "alb_ingress_cidrs" {
-  description = "Allowed CIDR blocks for ALB ingress rules"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
 }

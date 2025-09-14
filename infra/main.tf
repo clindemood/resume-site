@@ -1,288 +1,148 @@
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
     }
   }
 }
 
-provider "aws" {
-  region = var.aws_region
+provider "azurerm" {
+  features {}
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
 }
 
 locals {
-  repository_url = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.app.name}"
+  frontdoor_host = "${var.app_name}-fd.azurefd.net"
 }
 
-resource "aws_ecr_repository" "app" {
-  name                 = "resume-site"
-  image_tag_mutability = "IMMUTABLE"
+resource "azurerm_resource_group" "main" {
+  name     = var.resource_group_name
+  location = var.location
+}
 
-  image_scanning_configuration {
-    scan_on_push = true
+resource "azurerm_container_registry" "main" {
+  name                = var.registry_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  sku                 = "Basic"
+  admin_enabled       = true
+}
+
+resource "azurerm_app_service_plan" "main" {
+  name                = "${var.app_name}-plan"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  kind                = "Linux"
+  reserved            = true
+
+  sku {
+    tier = "Basic"
+    size = "B1"
   }
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = "resume-cluster"
+resource "azurerm_app_service" "main" {
+  name                = var.app_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  app_service_plan_id = azurerm_app_service_plan.main.id
+
+  site_config {
+    linux_fx_version = "DOCKER|${azurerm_container_registry.main.login_server}/${var.app_name}:latest"
+  }
+
+  app_settings = {
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+    DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.main.login_server}"
+    DOCKER_REGISTRY_SERVER_USERNAME     = azurerm_container_registry.main.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD     = azurerm_container_registry.main.admin_password
+  }
 }
 
-data "aws_iam_policy_document" "ecs_task_assume" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
+resource "azurerm_storage_account" "logs" {
+  name                     = var.log_storage_account_name
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "logs" {
+  name                  = "logs"
+  storage_account_name  = azurerm_storage_account.logs.name
+  container_access_type = "private"
+}
+
+resource "azurerm_frontdoor" "main" {
+  name                = "${var.app_name}-fd"
+  resource_group_name = azurerm_resource_group.main.name
+
+  backend_pool_settings {
+    backend_pools_send_receive_timeout_seconds = 60
+  }
+
+  backend_pool {
+    name = "backendPool"
+
+    backend {
+      host_header = azurerm_app_service.main.default_site_hostname
+      address     = azurerm_app_service.main.default_site_hostname
+      http_port   = 80
+      https_port  = 443
+      priority    = 1
+      weight      = 50
+    }
+
+    load_balancing_name = "loadBalancingSettings"
+    health_probe_name   = "healthProbeSettings"
+  }
+
+  frontend_endpoint {
+    name      = "frontendEndpoint"
+    host_name = local.frontdoor_host
+  }
+
+  routing_rule {
+    name               = "routingRule"
+    frontend_endpoints = ["frontendEndpoint"]
+    accepted_protocols = ["Http", "Https"]
+    patterns_to_match  = ["/*"]
+
+    forwarding_configuration {
+      backend_pool_name = "backendPool"
     }
   }
-}
 
-resource "aws_iam_role" "task_execution" {
-  name               = "resume-task-execution"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume.json
-}
+  load_balancing_settings {
+    name                        = "loadBalancingSettings"
+    sample_size                 = 4
+    successful_samples_required = 2
+  }
 
-resource "aws_iam_role_policy_attachment" "task_execution" {
-  role       = aws_iam_role.task_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnets" "default" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
+  health_probe_settings {
+    name                = "healthProbeSettings"
+    path                = "/"
+    protocol            = "Https"
+    interval_in_seconds = 30
   }
 }
 
-resource "aws_security_group" "alb" {
-  name   = "resume-alb-sg"
-  vpc_id = data.aws_vpc.default.id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = var.alb_ingress_cidrs
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = var.alb_ingress_cidrs
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "azurerm_dns_zone" "main" {
+  name                = var.domain_name
+  resource_group_name = azurerm_resource_group.main.name
 }
 
-resource "aws_s3_bucket" "lb_logs" {
-  bucket = "resume-alb-logs-${var.aws_account_id}"
+output "registry_url" {
+  description = "Login server of the container registry"
+  value       = azurerm_container_registry.main.login_server
 }
 
-resource "aws_s3_bucket_policy" "lb_logs" {
-  bucket = aws_s3_bucket.lb_logs.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Sid      = "AWSALBLogDeliveryWrite",
-        Effect   = "Allow",
-        Principal = { Service = "logdelivery.elb.amazonaws.com" },
-        Action   = "s3:PutObject",
-        Resource = "${aws_s3_bucket.lb_logs.arn}/*"
-      },
-      {
-        Sid      = "AWSALBLogDeliveryCheck",
-        Effect   = "Allow",
-        Principal = { Service = "logdelivery.elb.amazonaws.com" },
-        Action   = "s3:GetBucketAcl",
-        Resource = aws_s3_bucket.lb_logs.arn
-      }
-    ]
-  })
+output "app_endpoint" {
+  description = "Endpoint for the application"
+  value       = azurerm_frontdoor.main.frontend_endpoints[0].host_name
 }
 
-resource "aws_lb" "app" {
-  name               = "resume-alb"
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb.id]
-  subnets            = data.aws_subnets.default.ids
-
-  access_logs {
-    bucket  = aws_s3_bucket.lb_logs.id
-    prefix  = "alb"
-    enabled = true
-  }
-
-  depends_on = [aws_s3_bucket_policy.lb_logs]
-}
-
-resource "aws_lb_target_group" "app" {
-  name       = "resume-tg"
-  port       = 8000
-  protocol   = "HTTP"
-  vpc_id     = data.aws_vpc.default.id
-  target_type = "ip"
-
-  health_check {
-    path    = "/health"
-    matcher = "200"
-  }
-}
-
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.app.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.app.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.certificate_arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
-  }
-}
-
-resource "aws_security_group" "ecs" {
-  name   = "resume-ecs-sg"
-  vpc_id = data.aws_vpc.default.id
-
-  ingress {
-    from_port       = 8000
-    to_port         = 8000
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_cloudwatch_log_group" "app" {
-  name              = "/ecs/resume-site"
-  retention_in_days = 30
-}
-
-resource "aws_ecs_task_definition" "app" {
-  family                   = "resume-site"
-  cpu                      = "256"
-  memory                   = "512"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.task_execution.arn
-
-  container_definitions = jsonencode([
-    {
-      name      = "resume-site"
-      image     = "${local.repository_url}:latest"
-      essential = true
-      readonlyRootFilesystem = true
-      portMappings = [{
-        containerPort = 8000
-        hostPort      = 8000
-      }]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.app.name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
-      environment = [
-        {
-          name  = "PORT"
-          value = "8000"
-        },
-        {
-          name  = "SESSION_TTL"
-          value = "3600"
-        }
-      ]
-      secrets = [
-        {
-          name      = "SESSION_REDIS_URL"
-          valueFrom = var.session_redis_url
-        }
-      ]
-    }
-  ])
-}
-
-resource "aws_ecs_service" "app" {
-  name            = "resume-service"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-
-  network_configuration {
-    subnets         = data.aws_subnets.default.ids
-    security_groups = [aws_security_group.ecs.id]
-    assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
-    container_name   = "resume-site"
-    container_port   = 8000
-  }
-
-  depends_on = [aws_lb_listener.https]
-}
-
-data "aws_route53_zone" "main" {
-  name         = var.domain_name
-  private_zone = false
-}
-
-resource "aws_route53_record" "app" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = var.domain_name
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.app.dns_name
-    zone_id                = aws_lb.app.zone_id
-    evaluate_target_health = true
-  }
-}
-
-output "repository_url" {
-  description = "URL of the ECR repository"
-  value       = local.repository_url
-}
-
-output "load_balancer_dns" {
-  description = "DNS name of the created load balancer"
-  value       = aws_lb.app.dns_name
-}
