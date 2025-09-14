@@ -253,7 +253,7 @@ export async function loadResume() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function init() {
   if (document.getElementById('resume-container')) {
     loadResume();
   }
@@ -266,4 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
   ) {
     loadEducation();
   }
-});
+}
+
+if (document.readyState !== 'loading') {
+  init();
+} else {
+  document.addEventListener('DOMContentLoaded', init);
+}
