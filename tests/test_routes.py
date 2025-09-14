@@ -74,3 +74,56 @@ def test_prune_sessions_removes_old():
     sessions[old_id] = {"_ts": time.time() - (SESSION_TTL + 1)}
     prune_sessions()
     assert old_id not in sessions
+
+
+def test_rate_limit_exceeded():
+    local_client = TestClient(app)
+    headers = {"X-Forwarded-For": "203.0.113.1"}
+    for _ in range(10):
+        resp = local_client.get("/api/start", headers=headers)
+        assert resp.status_code == 200
+    resp = local_client.get("/api/start", headers=headers)
+    assert resp.status_code == 429
+
+
+def test_command_rate_limit_exceeded():
+    local_client = TestClient(app)
+    headers = {"X-Forwarded-For": "203.0.113.2"}
+    start = local_client.get("/api/start", headers=headers)
+    csrf = start.json()["csrf_token"]
+    for _ in range(10):
+        resp = local_client.post(
+            "/api/command",
+            json={"command": "open overview"},
+            headers={"X-CSRF-Token": csrf, **headers},
+        )
+        assert resp.status_code == 200
+    resp = local_client.post(
+        "/api/command",
+        json={"command": "open overview"},
+        headers={"X-CSRF-Token": csrf, **headers},
+    )
+    assert resp.status_code == 429
+
+
+def test_session_limit_evicts_oldest():
+    from app import main
+
+    original = main.MAX_SESSIONS
+    main.MAX_SESSIONS = 2
+    main.sessions.clear()
+    local_client = TestClient(main.app)
+
+    s1 = local_client.get("/api/start", headers={"X-Forwarded-For": "198.51.100.1"})
+    id1 = s1.cookies["session_id"]
+    s2 = local_client.get("/api/start", headers={"X-Forwarded-For": "198.51.100.2"})
+    id2 = s2.cookies["session_id"]
+    s3 = local_client.get("/api/start", headers={"X-Forwarded-For": "198.51.100.3"})
+    id3 = s3.cookies["session_id"]
+
+    assert len(main.sessions) == 2
+    assert id1 not in main.sessions
+    assert id2 in main.sessions and id3 in main.sessions
+
+    main.sessions.clear()
+    main.MAX_SESSIONS = original
