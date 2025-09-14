@@ -5,7 +5,7 @@
       "type": "file"
     },
     "certifications.txt": {
-      "content": "Cisco Certified Network Associate; Microsoft Azure Administrator (AZ-104); AWS Certified Cloud Practitioner; CompTIA A+ (220-1101 + 220-1102); CompTIA Network+ (N10-008); CompTIA Security+ (SY0-601); Microsoft SC-900; Microsoft Azure Data Fundamentals (DP-900); ITIL 4.",
+      "content": "Cisco Certified Network Associate; Microsoft Azure Administrator (AZ-104); Microsoft Azure Fundamentals (AZ-900); CompTIA A+ (220-1101 + 220-1102); CompTIA Network+ (N10-008); CompTIA Security+ (SY0-601); Microsoft SC-900; Microsoft Azure Data Fundamentals (DP-900); ITIL 4.",
       "type": "file"
     },
     "contact.txt": {
@@ -43,7 +43,7 @@
           "type": "file"
         },
         "2025-09-resume-creation-lab.txt": {
-          "content": "Created an interactive lab using AI tools to build a resume-focused website.\nContainerized the application with Docker and orchestrated it using Kubernetes.\nDeployed the site to Azure for public access and scalability testing.\nThis is that website!",
+          "content": "Created an interactive lab using AI tools to build a resume-focused website.\nContainerized the application with Docker and orchestrated it using Azure Kubernetes Service (AKS).\nDeployed the site to Azure for public access and scalability testing.\nThis is that website!",
           "type": "file"
         }
       },

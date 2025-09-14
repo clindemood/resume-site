@@ -19,8 +19,8 @@
       "expires": "2026-05",
       "id": 3,
       "issued": "2023-05",
-      "issuer": "Amazon Web Services (AWS)",
-      "name": "AWS Certified Cloud Practitioner"
+      "issuer": "Microsoft",
+      "name": "AZ-900: Microsoft Azure Fundamentals"
     },
     {
       "credential_id": "438017330",
@@ -225,7 +225,7 @@
     {
       "bullets": [
         "Created an interactive lab using AI tools to build a resume-focused website.",
-        "Containerized the application with Docker and orchestrated it using Kubernetes.",
+        "Containerized the application with Docker and orchestrated it using Azure Kubernetes Service (AKS).",
         "Deployed the site to Azure for public access and scalability testing.",
         "This is that website!"
       ],
