@@ -32,11 +32,15 @@ This repository powers an interactive resume and portfolio site built with FastA
    ```
 3. Open <http://localhost:8000/> in your browser (replace `8000` with the value of `PORT` if changed).
 
-### Session storage
+## Environment variables
 
-Sessions are stored in memory and automatically pruned after ``SESSION_TTL`` seconds
-(default: 3600).  For horizontal scalability you can provide a Redis instance by
-setting ``SESSION_REDIS_URL``.
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `PORT` | `8000` | Port that the server listens on. |
+| `SESSION_TTL` | `3600` | Session expiration time in seconds. |
+| `SESSION_REDIS_URL` | _(none)_ | Redis connection URL for session storage. Provide this when deploying to share sessions across multiple tasks. |
+
+When deploying, ensure `SESSION_REDIS_URL` is set so sessions can be shared across multiple tasks.
 
 ## Updating resume data
 
