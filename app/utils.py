@@ -7,6 +7,7 @@ provides small, well‑documented helpers that are easier for newcomers to read.
 
 from datetime import datetime
 from typing import Optional
+import re
 
 
 def format_date(value: Optional[str], short: bool = False) -> str:
@@ -38,7 +39,8 @@ def format_date(value: Optional[str], short: bool = False) -> str:
             return value
 
     year = dt.year % 100 if short else dt.year
-    return f"{month}/{day}/{year}"
+    year_fmt = f"{int(year):02d}" if short else f"{year}"
+    return f"{month:02d}/{day:02d}/{year_fmt}"
 
 
 def strip_scheme(url: Optional[str]) -> str:
@@ -49,8 +51,8 @@ def strip_scheme(url: Optional[str]) -> str:
     """
     if not url:
         return ""
-    url = url.replace("https://", "").replace("http://", "")
-    if url.startswith("www."):
+    url = re.sub(r"^https?://", "", url, flags=re.IGNORECASE)
+    if url.lower().startswith("www."):
         url = url[4:]
     return url
 

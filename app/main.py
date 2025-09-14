@@ -305,13 +305,16 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
     game = state.setdefault(
         "secret",
         {
-            "defeated": set(),
+            # ``set`` cannot be JSON serialised when sessions are stored in
+            # Redis.  Using a list keeps the state JSON friendly while we
+            # convert to a set for fast membership tests during gameplay.
+            "defeated": [],
             "equipment": [],
             "player_hp": 30,
             "enemy_hp": {"printer": 15, "server": 18, "mdf": 20},
         },
     )
-    defeated = game.setdefault("defeated", set())
+    defeated = set(game.setdefault("defeated", []))
 
     # Command aliases allow terse gameplay commands.
     aliases = {
@@ -462,9 +465,10 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
             lines.append(f"{target_key.capitalize()} HP: {max(enemy_hp,0)}")
             if enemy_hp <= 0:
                 defeated.add(target_key)
+                game["defeated"] = list(defeated)
                 loot = {
                     "printer": "Mouse of Many Clicks",
-                    "server": "shimmering Tech Aura",
+                    "server": "Shimmering Tech Aura",
                     "mdf": "Cat5 of Ninetails",
                 }[target_key]
                 game["equipment"].append(loot)
@@ -485,7 +489,7 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         if player_hp <= 0:
             state.pop("mode", None)
             lines.append("You collapse in a heap of patch cables. Game over.")
-        elif {"printer", "server", "mdf"} <= defeated:
+        elif {"printer", "server", "mdf"}.issubset(defeated):
             lines.append("All foes vanquished! You are the supreme admin.")
         return {"text": "\n".join(lines), "lines": lines}
 
@@ -523,7 +527,7 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         if args[0] == "secret":
             state["mode"] = "secret"
             state["secret"] = {
-                "defeated": set(),
+                "defeated": [],
                 "equipment": [],
                 "player_hp": 30,
                 "enemy_hp": {"printer": 15, "server": 18, "mdf": 20},
