@@ -48,7 +48,9 @@ def test_api_start_and_command_flow():
     assert "session_id" in start_resp.cookies
 
     open_resp = client.post(
-        "/api/command", json={"command": "open overview"}, headers={"X-CSRF-Token": csrf}
+        "/api/command",
+        json={"command": "open overview"},
+        headers={"X-CSRF-Token": csrf},
     )
     assert open_resp.status_code == 200
     assert "Name:" in open_resp.json()["text"]

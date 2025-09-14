@@ -19,6 +19,7 @@ def test_security_headers_present():
 def test_cors_respects_allowed_origins():
     os.environ["ALLOWED_ORIGINS"] = "https://allowed.example"
     import app.main as main
+
     importlib.reload(main)
 
     client = TestClient(main.app)
