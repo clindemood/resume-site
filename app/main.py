@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 import json
+import secrets
+import shlex
 import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 APP_DIR = Path(__file__).parent
 DATA_PATH = APP_DIR / "resume.json"
@@ -39,6 +42,15 @@ def get_last_updated() -> str:
 RESUME.setdefault("meta", {})["last_updated"] = get_last_updated()
 
 STATIC_DIR = APP_DIR / "static"
+
+CSRF_TOKEN = secrets.token_hex(16)
+ASCII_ART = r"""
+   ____                            _     
+  / ___| ___ _ __   ___ _ __ __ _| |___ 
+ | |  _ / _ \ '_ \ / _ \ '__/ _` | / __|
+ | |_| |  __/ | | |  __/ | | (_| | \__ \
+  \____|\___|_| |_|\___|_|  \__,_|_|___/
+"""
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -180,6 +192,26 @@ def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/resume", response_class=FileResponse)
+def resume_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "resume.html")
+
+
+@app.get("/projects", response_class=FileResponse)
+def projects_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "projects.html")
+
+
+@app.get("/education", response_class=FileResponse)
+def education_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "education.html")
+
+
+@app.get("/about", response_class=FileResponse)
+def about_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "about.html")
+
+
 @app.get("/api/resume")
 def get_resume() -> Dict[str, Any]:
     return RESUME
@@ -198,3 +230,63 @@ def api_show(section: str, item_id: int) -> Dict[str, str]:
         raise HTTPException(status_code=404, detail="Item not found")
     text = render_details(section, items[item_id - 1])
     return {"text": text}
+
+
+class Command(BaseModel):
+    command: str
+
+
+@app.get("/api/start")
+def api_start() -> Dict[str, Any]:
+    global CSRF_TOKEN
+    CSRF_TOKEN = secrets.token_hex(16)
+    text = "Type 'help' for commands. Try 'open overview'."
+    return {"ascii_art": ASCII_ART, "text": text, "csrf_token": CSRF_TOKEN}
+
+
+@app.post("/api/command")
+def api_command(cmd: Command, x_csrf_token: str = Header("")) -> Dict[str, Any]:
+    if x_csrf_token != CSRF_TOKEN:
+        raise HTTPException(status_code=403, detail="Invalid CSRF token")
+    parts = shlex.split(cmd.command)
+    if not parts:
+        return {"text": ""}
+    action = parts[0].lower()
+    try:
+        if action == "help":
+            lines = [
+                "Commands:",
+                "open <section> [page] [--expand]",
+                "show <section> <id>",
+                "clear",
+            ]
+            return {"lines": lines}
+        if action == "clear":
+            return {"text": "", "clear": True}
+        if action == "open" and len(parts) >= 2:
+            section = parts[1]
+            page = 1
+            expand = False
+            for token in parts[2:]:
+                if token in {"--expand", "-e"}:
+                    expand = True
+                else:
+                    try:
+                        page = int(token)
+                    except ValueError:
+                        pass
+            text = list_section(section, expand=expand, page=page)
+            return {"text": text}
+        if action == "show" and len(parts) >= 3:
+            section = parts[1]
+            item_id = int(parts[2])
+            items = RESUME.get(section, [])
+            if not isinstance(items, list) or item_id < 1 or item_id > len(items):
+                raise HTTPException(status_code=404, detail="Item not found")
+            text = render_details(section, items[item_id - 1])
+            return {"text": text}
+    except HTTPException:
+        raise
+    except Exception:
+        return {"error": True, "text": "Invalid command"}
+    return {"error": True, "text": "Unknown command"}
