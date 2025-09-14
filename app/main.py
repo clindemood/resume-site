@@ -18,14 +18,23 @@ import shlex
 import subprocess
 import time
 import uuid
+import secrets
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI, Request
+from fastapi import (
+    FastAPI,
+    Request,
+    Response,
+    Cookie,
+    Header,
+    HTTPException,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 try:  # Optional import for setting security headers
     from secure import SecureHeaders  # type: ignore
@@ -195,6 +204,31 @@ if not USE_REDIS:
 
 
 ITEMS_PER_PAGE = 5
+
+# ---------------------------------------------------------------------------
+# Pydantic models
+# ---------------------------------------------------------------------------
+
+
+class StartResponse(BaseModel):
+    ascii_art: str | None = None
+    text: str
+    csrf_token: str
+
+
+class CommandRequest(BaseModel):
+    command: str
+
+
+class CommandResponse(BaseModel):
+    text: str
+    ascii_art: str | None = None
+    clear: bool | None = None
+    lines: List[str] | None = None
+    error: bool | None = None
+
+    class Config:
+        extra = "allow"
 
 # ---------------------------------------------------------------------------
 # Helper formatting utilities
@@ -908,11 +942,14 @@ def get_resume() -> Dict[str, Any]:
     return RESUME
 
 
-@app.get("/api/start")
-def start() -> Dict[str, Any]:
+@app.get("/api/start", response_model=StartResponse)
+def start(response: Response) -> StartResponse:
     """Start a new CLI session."""
     session_id = str(uuid.uuid4())
-    sessions[session_id] = {"_ts": time.time()}
+    csrf_token = secrets.token_hex(16)
+    sessions[session_id] = {"_ts": time.time(), "csrf": csrf_token}
+    response.set_cookie("session_id", session_id, httponly=True, samesite="strict")
+    response.set_cookie("csrf_token", csrf_token, httponly=False, samesite="strict")
     ascii_art = "\n".join(
         [
             " .      .      .      .      .      .      .      .      .      .      .",
@@ -949,17 +986,23 @@ def start() -> Dict[str, Any]:
         + "Type 'help' for commands or 'open overview' to begin.\n"
         + f"Last updated: {RESUME['meta']['last_updated']}"
     )
-    return {"session_id": session_id, "ascii_art": ascii_art, "text": welcome}
+    return StartResponse(ascii_art=ascii_art, text=welcome, csrf_token=csrf_token)
 
 
-@app.post("/api/command")
-async def command(payload: Dict[str, Any]) -> Dict[str, Any]:
-    session_id = payload.get("session_id")
-    cmd = payload.get("command", "").strip()
-    state = sessions.get(session_id)
+@app.post("/api/command", response_model=CommandResponse)
+async def command(
+    req: CommandRequest,
+    session_id: uuid.UUID | None = Cookie(None),
+    csrf_token: str | None = Header(None, alias="X-CSRF-Token"),
+) -> CommandResponse:
+    if session_id is None:
+        raise HTTPException(status_code=400, detail="Invalid session.")
+    state = sessions.get(str(session_id))
     if state is None:
-        return {"text": "Invalid session."}
+        raise HTTPException(status_code=400, detail="Invalid session.")
+    if csrf_token is None or csrf_token != state.get("csrf"):
+        raise HTTPException(status_code=403, detail="Invalid CSRF token.")
     state["_ts"] = time.time()
-    result = handle_command(state, cmd)
-    sessions[session_id] = state
+    result = handle_command(state, req.command.strip())
+    sessions[str(session_id)] = state
     return result

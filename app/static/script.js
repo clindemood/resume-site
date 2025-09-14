@@ -1,4 +1,4 @@
-let sessionId; // current CLI session identifier returned by the backend
+let csrfToken; // CSRF token provided by the backend
 const terminal = document.getElementById('terminal');
 const form = document.getElementById('command-form');
 const input = document.getElementById('command');
@@ -44,7 +44,7 @@ function print(text, cls = 'output') {
 async function start() {
   const res = await fetch('/api/start');
   const data = await res.json();
-  sessionId = data.session_id;
+  csrfToken = data.csrf_token;
   if (data.ascii_art) {
     print(data.ascii_art, 'ascii');
   }
@@ -55,8 +55,8 @@ async function start() {
 async function sendCommand(cmd) {
   const res = await fetch('/api/command', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId, command: cmd })
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ command: cmd })
   });
   const data = await res.json();
   print('$ ' + cmd, 'input');
