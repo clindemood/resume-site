@@ -43,23 +43,24 @@ def test_api_start_and_command_flow():
     start_resp = client.get("/api/start")
     assert start_resp.status_code == 200
     data = start_resp.json()
-    assert "session_id" in data
-    session_id = data["session_id"]
+    assert "csrf_token" in data
+    csrf = data["csrf_token"]
+    assert "session_id" in start_resp.cookies
 
     open_resp = client.post(
-        "/api/command", json={"session_id": session_id, "command": "open overview"}
+        "/api/command", json={"command": "open overview"}, headers={"X-CSRF-Token": csrf}
     )
     assert open_resp.status_code == 200
     assert "Name:" in open_resp.json()["text"]
 
     next_resp = client.post(
-        "/api/command", json={"session_id": session_id, "command": "next"}
+        "/api/command", json={"command": "next"}, headers={"X-CSRF-Token": csrf}
     )
     assert next_resp.status_code == 200
     assert "Name:" in next_resp.json()["text"]
 
     invalid_resp = client.post(
-        "/api/command", json={"session_id": session_id, "command": "999"}
+        "/api/command", json={"command": "999"}, headers={"X-CSRF-Token": csrf}
     )
     assert invalid_resp.status_code == 200
     assert invalid_resp.json()["text"] == "Unknown id."
