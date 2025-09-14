@@ -15,7 +15,6 @@ This repository powers an interactive resume and portfolio site built with FastA
    ```
 3. Visit <http://localhost:8000/> to browse the site.
 
-For a more detailed walkthrough of local setup and available pages, see [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md).
 
 ## Running with Docker
 
@@ -55,26 +54,6 @@ The site reads its resume information from JSON files under `app/`.
    jq --sort-keys '.' app/resume.json > tmp && mv tmp app/resume.json
    jq --sort-keys '.' app/filesystem.json > tmp && mv tmp app/filesystem.json
    ```
-4. Run tests to ensure the data loads:
-   ```bash
-   pytest
-   ```
-5. Commit and deploy the changes.
+4. Commit and deploy the changes.
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on formatting JSON and submitting changes.
-
-## Deployment
-
-Azure hosting instructions are covered in [DEPLOYMENT.md](DEPLOYMENT.md). For a quick deployment using the Azure CLI:
-
-```bash
-az group create --name resume-rg --location eastus
-az acr create --resource-group resume-rg --name resumeRegistry --sku Basic
-az acr build --registry resumeRegistry --image resume-site:latest .
-az webapp create --plan resume-plan --resource-group resume-rg --name resume-app --deployment-container-image-name resumeregistry.azurecr.io/resume-site:latest
-```
-
-See the deployment guide for details on Azure Container Apps and other options.
 
