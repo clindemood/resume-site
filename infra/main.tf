@@ -147,6 +147,11 @@ resource "aws_security_group" "ecs" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "app" {
+  name              = "/ecs/resume-site"
+  retention_in_days = 30
+}
+
 resource "aws_ecs_task_definition" "app" {
   family                   = "resume-site"
   cpu                      = "256"
@@ -164,6 +169,14 @@ resource "aws_ecs_task_definition" "app" {
         containerPort = 8000
         hostPort      = 8000
       }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.app.name
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
