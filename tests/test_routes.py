@@ -17,6 +17,13 @@ def test_projects_returns_200():
 def test_api_resume_returns_200():
     response = client.get("/api/resume")
     assert response.status_code == 200
+    data = response.json()
+    # overview must include a name
+    assert data.get("overview", {}).get("name")
+    # verify key sections exist and are not empty
+    for section in ["projects", "education", "experience", "skills"]:
+        assert section in data
+        assert isinstance(data[section], list) and len(data[section]) > 0
 
 
 def test_education_returns_200():
