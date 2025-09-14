@@ -1,130 +1,138 @@
 # Deployment
 
-This project can be hosted on AWS in a few different ways. Below are two common approaches.
+This project can be hosted on Microsoft Azure using container-based services. The instructions below use Azure Container Registry (ACR), Azure Container Apps, Azure DNS, and Azure CLI commands. Terraform equivalents are included for those preferring infrastructure as code.
 
-## Option A – Single container/EC2
+## Prerequisites
 
-1. Create an ECR repository and push the container image.
+- An Azure subscription with permissions to create resource groups, container registries, container apps, and DNS records.
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed and logged in via `az login`.
+- Docker installed.
+- (Optional) [Terraform](https://developer.hashicorp.com/terraform/downloads) installed.
+
+## Build and push the image
+
+1. Create a resource group and container registry.
 
    ```bash
-   aws ecr create-repository --repository-name resume-site --region <region>
+   az group create --name resume-rg --location eastus
+   az acr create --resource-group resume-rg --name resumeRegistry --sku Basic
+   ```
 
+2. Build the container image and push it to ACR.
+
+   ```bash
    docker build -t resume-site:latest .
-   aws ecr get-login-password --region <region> \
-     | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
-   docker tag resume-site:latest <account-id>.dkr.ecr.<region>.amazonaws.com/resume-site:latest
-   docker push <account-id>.dkr.ecr.<region>.amazonaws.com/resume-site:latest
+   az acr login --name resumeRegistry
+   docker tag resume-site:latest resumeregistry.azurecr.io/resume-site:latest
+   docker push resumeregistry.azurecr.io/resume-site:latest
    ```
 
-2. Launch the container on ECS Fargate or an EC2 instance behind an ALB.
+## Deploy to Azure Container Apps
+
+1. Create a Container Apps environment and deploy the image.
 
    ```bash
-   aws ecs run-task --cluster resume-cluster --launch-type FARGATE \
-     --network-configuration "awsvpcConfiguration={subnets=[subnet-abc],securityGroups=[sg-123],assignPublicIp=ENABLED}" \
-     --task-definition resume-site
+   az containerapp env create --name resume-env --resource-group resume-rg --location eastus
+
+   az containerapp create \
+     --name resume-app \
+     --resource-group resume-rg \
+     --environment resume-env \
+     --image resumeregistry.azurecr.io/resume-site:latest \
+     --target-port 80 \
+     --ingress external \
+     --registry-server resumeregistry.azurecr.io \
+     --query properties.configuration.ingress.fqdn
    ```
 
-3. Configure an Application Load Balancer and target group, then expose port 80/443.
+   The command outputs the public FQDN of the running application. If you prefer Azure App Service, replace the above with `az webapp create --plan <plan> --name resume-app --deployment-container-image-name resumeregistry.azurecr.io/resume-site:latest`.
 
-   ```bash
-   aws elbv2 create-target-group --name resume-tg --protocol HTTP --port 80 --vpc-id vpc-123
-   aws elbv2 register-targets --target-group-arn <tg-arn> --targets Id=<ecs-task-id>
-   aws elbv2 create-listener --load-balancer-arn <lb-arn> --protocol HTTP --port 80 \
-     --default-actions Type=forward,TargetGroupArn=<tg-arn>
-   ```
+## Configure DNS
 
-4. Point your domain to the load balancer using Route53.
-
-   ```bash
-   aws route53 change-resource-record-sets --hosted-zone-id <zone-id> --change-batch file://dns.json
-   ```
-
-## Deploying to AWS ECS (Fargate)
-
-### Prerequisites
-
-Before deploying you will need:
-
-- An AWS account with permissions to create ECR, ECS, load balancer, Route53 and IAM resources.
-- The [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) configured with `aws configure`.
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) installed.
-- Docker and an ECR repository where the image will be stored.
-
-### Build and push the image
+Point a domain to the deployed application using Azure DNS.
 
 ```bash
-docker build -t resume-site:latest .
-aws ecr get-login-password --region <region> \
-  | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
-docker tag resume-site:latest <account-id>.dkr.ecr.<region>.amazonaws.com/resume-site:latest
-docker push <account-id>.dkr.ecr.<region>.amazonaws.com/resume-site:latest
+az network dns zone create --resource-group resume-rg --name example.com
+az network dns record-set cname create --resource-group resume-rg --zone-name example.com --name resume
+az network dns record-set cname add-record --resource-group resume-rg --zone-name example.com --record-set-name resume --cname <app-fqdn>
 ```
 
-### Provision infrastructure with Terraform
+## Terraform provisioning (optional)
 
-The Terraform code under [`infra/`](infra) sets up the ECR repository, ECS cluster
-and service, load balancer and DNS records. Run the following from the repo root:
+The following Terraform configuration replicates the above Azure CLI steps:
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "resume-rg"
+  location = "eastus"
+}
+
+resource "azurerm_container_registry" "acr" {
+  name                = "resumeRegistry"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Basic"
+  admin_enabled       = true
+}
+
+resource "azurerm_container_app_environment" "env" {
+  name                = "resume-env"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_container_app" "app" {
+  name                         = "resume-app"
+  container_app_environment_id = azurerm_container_app_environment.env.id
+  resource_group_name          = azurerm_resource_group.rg.name
+  revision_mode                = "Single"
+
+  template {
+    container {
+      name   = "resume"
+      image  = "${azurerm_container_registry.acr.login_server}/resume-site:latest"
+      resources {
+        cpu    = 0.25
+        memory = "0.5Gi"
+      }
+    }
+  }
+
+  ingress {
+    external_enabled = true
+    target_port      = 80
+  }
+}
+```
+
+Apply the configuration:
 
 ```bash
-cd infra
 terraform init
-terraform apply \
-  -var="aws_region=us-east-1" \
-  -var="aws_account_id=123456789012" \
-  -var="domain_name=example.com" \
-  -var="certificate_arn=arn:aws:acm:us-east-1:123456789012:certificate/abc" \
-  -var="session_redis_url=arn:aws:ssm:us-east-1:123456789012:parameter/redis_url"
+terraform apply
 ```
 
-Required variables:
+## Scaling and rolling out updates
 
-- **aws_region** – AWS region for all resources.
-- **aws_account_id** – your 12‑digit AWS account number used to form the ECR URL.
-- **domain_name** – domain that will point at the load balancer.
-- **certificate_arn** – ACM certificate ARN for HTTPS on the load balancer.
-- **session_redis_url** – ARN of a secret or SSM parameter containing the Redis connection string for session storage.
+- To scale the service: `az containerapp update --name resume-app --resource-group resume-rg --scale-rules '{"name":"cpu","custom":{"type":"cpu","metadata":{"threshold":"60"}}}'`
+- To deploy a new image: rebuild and push the image, then run `az containerapp update --name resume-app --resource-group resume-rg --image resumeregistry.azurecr.io/resume-site:latest`
 
-When `terraform apply` finishes it will output the ECR repository URL and the
-load balancer DNS name. Point your domain to that DNS name if you supplied a
-Route53 hosted zone.
-
-### Scaling and rolling out updates
-
-- To scale the service: `aws ecs update-service --cluster resume-cluster --service resume-service --desired-count 2`
-- To deploy a new image: rebuild and push the image, then run
-  `aws ecs update-service --cluster resume-cluster --service resume-service --force-new-deployment`
-
-### Troubleshooting
-
-- **Access denied**: ensure your IAM user or role has permissions for ECR, ECS and IAM. Re‑run `aws configure` or use a profile with the correct permissions.
-- **Image pull errors**: verify `docker push` succeeded and that the ECS task definition uses the correct repository URL and tag. If needed, rerun the ECR login command.
-- **Terraform errors**: confirm AWS credentials and required variables are set. Use `-auto-approve` carefully and review the plan output.
-
-### Clean up
+## Clean up
 
 Destroy all resources when finished:
 
 ```bash
-terraform destroy \
-  -var="aws_region=us-east-1" \
-  -var="aws_account_id=123456789012" \
-  -var="domain_name=example.com" \
-  -var="certificate_arn=arn:aws:acm:us-east-1:123456789012:certificate/abc" \
-  -var="session_redis_url=arn:aws:ssm:us-east-1:123456789012:parameter/redis_url"
+az group delete --name resume-rg --yes --no-wait
 ```
 
-This removes the ECS service, load balancer, DNS records and ECR repository to
-prevent ongoing charges.
+Or, if using Terraform:
 
-## Option B – Static hosting + serverless API
+```bash
+terraform destroy
+```
 
-1. Upload files under `app/static/` to an S3 bucket configured for static website hosting or fronted by CloudFront.
-2. Package the FastAPI app for AWS Lambda using [Mangum](https://github.com/jordaneremieff/mangum) or a similar ASGI adapter.
-3. Deploy the function behind API Gateway with endpoints under `/api/*` and enable CORS for your static site's origin.
-4. Update any front-end code if the API lives on a different domain.
-
-## General notes
-
-- Include the JSON data files in your deployment artifact so the API can load resume content.
-- No external database is required; sessions are kept in memory.
-- Use CloudWatch Logs or similar monitoring to track runtime errors and access logs.
+This removes the container app, registry, DNS zone, and resource group to prevent ongoing charges.
