@@ -17,11 +17,29 @@ function formatDate(str, short = false) {
   return `${m}/${d}/${year}`;
 }
 
+function sanitizeText(value) {
+  return typeof value === 'string' ? value : String(value ?? '');
+}
+
+function sanitizeUrl(url) {
+  try {
+    const parsed = new URL(String(url), document.baseURI);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch {}
+  return '#';
+}
+
+function sanitizeEmail(email) {
+  return encodeURIComponent(sanitizeText(email));
+}
+
 export async function loadAbout() {
   const r = await fetchResume();
   const p = document.getElementById('about-text');
   if (p) {
-    p.textContent = r.overview.summary;
+    p.textContent = sanitizeText(r.overview.summary);
   }
 }
 
@@ -32,20 +50,21 @@ export async function loadProjects() {
     r.projects.forEach(p => {
       const li = document.createElement('li');
       const heading = document.createElement('strong');
-      const date = p.start ? `${formatDate(p.start)} – ` : '';
-      heading.textContent = `${date}${p.name}`;
+      const start = sanitizeText(p.start);
+      const date = start ? `${formatDate(start)} – ` : '';
+      heading.textContent = `${date}${sanitizeText(p.name)}`;
       li.appendChild(heading);
       if (Array.isArray(p.bullets) && p.bullets.length) {
         const ul = document.createElement('ul');
         p.bullets.forEach(b => {
           const li2 = document.createElement('li');
-          li2.textContent = b;
+          li2.textContent = sanitizeText(b);
           ul.appendChild(li2);
         });
         li.appendChild(ul);
       } else if (p.outcome) {
         const pEl = document.createElement('p');
-        pEl.textContent = p.outcome;
+        pEl.textContent = sanitizeText(p.outcome);
         li.appendChild(pEl);
       }
       list.appendChild(li);
@@ -59,7 +78,7 @@ export async function loadEducation() {
   if (list) {
     r.education.forEach(e => {
       const li = document.createElement('li');
-      li.textContent = `${e.institution} — ${e.degree} (${e.year})`;
+      li.textContent = `${sanitizeText(e.institution)} — ${sanitizeText(e.degree)} (${sanitizeText(e.year)})`;
       list.appendChild(li);
     });
   }
@@ -67,7 +86,7 @@ export async function loadEducation() {
   if (certList && r.certifications) {
     r.certifications.forEach(c => {
       const li = document.createElement('li');
-      li.textContent = c.name;
+      li.textContent = sanitizeText(c.name);
       certList.appendChild(li);
     });
   }
@@ -79,18 +98,51 @@ export async function loadResume() {
   if (!main) return;
 
   const h1 = document.createElement('h1');
-  h1.textContent = r.overview.name;
+  h1.textContent = sanitizeText(r.overview.name);
   main.appendChild(h1);
 
   const contact = document.createElement('p');
-  const parts = [
-    r.overview.location,
-    `<a href="mailto:${r.overview.email}">${r.overview.email}</a>`,
-    `<a href="${r.overview.web}" target="_blank">${stripScheme(r.overview.web)}</a>`,
-    `<a href="${r.overview.linkedin}" target="_blank">LinkedIn</a>`,
-    `<a href="${r.overview.github}" target="_blank">GitHub</a>`
-  ];
-  contact.innerHTML = parts.join(' | ');
+  const addPart = content => {
+    if (contact.childNodes.length) {
+      contact.appendChild(document.createTextNode(' | '));
+    }
+    if (typeof content === 'string') {
+      contact.appendChild(document.createTextNode(content));
+    } else {
+      contact.appendChild(content);
+    }
+  };
+  addPart(sanitizeText(r.overview.location));
+  if (r.overview.email) {
+    const a = document.createElement('a');
+    a.href = `mailto:${sanitizeEmail(r.overview.email)}`;
+    a.textContent = sanitizeText(r.overview.email);
+    addPart(a);
+  }
+  if (r.overview.web) {
+    const a = document.createElement('a');
+    a.href = sanitizeUrl(r.overview.web);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = stripScheme(a.href);
+    addPart(a);
+  }
+  if (r.overview.linkedin) {
+    const a = document.createElement('a');
+    a.href = sanitizeUrl(r.overview.linkedin);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = 'LinkedIn';
+    addPart(a);
+  }
+  if (r.overview.github) {
+    const a = document.createElement('a');
+    a.href = sanitizeUrl(r.overview.github);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = 'GitHub';
+    addPart(a);
+  }
   main.appendChild(contact);
 
   const expH2 = document.createElement('h2');
@@ -98,16 +150,18 @@ export async function loadResume() {
   main.appendChild(expH2);
   r.experience.forEach(exp => {
     const h3 = document.createElement('h3');
-    h3.textContent = `${exp.role} – ${exp.company}`;
+    h3.textContent = `${sanitizeText(exp.role)} – ${sanitizeText(exp.company)}`;
     main.appendChild(h3);
     const p = document.createElement('p');
-    p.textContent = `${formatDate(exp.start)} - ${formatDate(exp.end, true)} | ${exp.location}`;
+    const start = sanitizeText(exp.start);
+    const end = sanitizeText(exp.end);
+    p.textContent = `${formatDate(start)} - ${formatDate(end, true)} | ${sanitizeText(exp.location)}`;
     main.appendChild(p);
     if (exp.bullets && exp.bullets.length) {
       const ul = document.createElement('ul');
       exp.bullets.forEach(b => {
         const li = document.createElement('li');
-        li.textContent = b;
+        li.textContent = sanitizeText(b);
         ul.appendChild(li);
       });
       main.appendChild(ul);
@@ -120,7 +174,7 @@ export async function loadResume() {
   const eduUl = document.createElement('ul');
   r.education.forEach(e => {
     const li = document.createElement('li');
-    li.textContent = `${e.institution} – ${e.degree} (${e.year})`;
+    li.textContent = `${sanitizeText(e.institution)} – ${sanitizeText(e.degree)} (${sanitizeText(e.year)})`;
     eduUl.appendChild(li);
   });
   main.appendChild(eduUl);
@@ -133,9 +187,9 @@ export async function loadResume() {
     r.certifications.forEach(c => {
       const li = document.createElement('li');
       const details = [];
-      if (c.issuer) details.push(c.issuer);
-      if (c.credential_id) details.push(`ID ${c.credential_id}`);
-      li.textContent = details.length ? `${c.name} — ${details.join(' · ')}` : c.name;
+      if (c.issuer) details.push(sanitizeText(c.issuer));
+      if (c.credential_id) details.push(`ID ${sanitizeText(c.credential_id)}`);
+      li.textContent = details.length ? `${sanitizeText(c.name)} — ${details.join(' · ')}` : sanitizeText(c.name);
       certUl.appendChild(li);
     });
     main.appendChild(certUl);
@@ -150,7 +204,7 @@ export async function loadResume() {
     if (Array.isArray(s.tags)) {
       s.tags.forEach(tag => {
         if (categories[tag]) {
-          categories[tag].push(s.name);
+          categories[tag].push(sanitizeText(s.name));
         }
       });
     }
