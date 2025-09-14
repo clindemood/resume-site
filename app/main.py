@@ -22,7 +22,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .utils import format_date, strip_scheme
+try:
+    from .utils import format_date, strip_scheme
+except ImportError:  # pragma: no cover - fallback for script execution
+    from utils import format_date, strip_scheme
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
