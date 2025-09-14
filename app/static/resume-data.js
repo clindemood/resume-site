@@ -249,3 +249,18 @@ export async function loadResume() {
     main.textContent = 'Could not load resume.';
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('resume-container')) {
+    loadResume();
+  }
+  if (document.getElementById('projects-list')) {
+    loadProjects();
+  }
+  if (
+    document.getElementById('education-list') ||
+    document.getElementById('certifications-list')
+  ) {
+    loadEducation();
+  }
+});
