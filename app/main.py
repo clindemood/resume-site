@@ -1,23 +1,29 @@
-"""Minimal resume API with basic open/show navigation."""
+"""Resume API featuring an interactive CLI mini-game."""
 
 from __future__ import annotations
 
 import json
+import secrets
+import shlex
 import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 APP_DIR = Path(__file__).parent
 DATA_PATH = APP_DIR / "resume.json"
+FS_PATH = APP_DIR / "filesystem.json"
 
 with DATA_PATH.open() as f:
     RESUME: Dict[str, Any] = json.load(f)
+with FS_PATH.open() as f:
+    FILESYSTEM: Dict[str, Any] = json.load(f)
 
 
 def get_last_updated() -> str:
@@ -39,6 +45,40 @@ def get_last_updated() -> str:
 RESUME.setdefault("meta", {})["last_updated"] = get_last_updated()
 
 STATIC_DIR = APP_DIR / "static"
+
+# ---------------------------------------------------------------------------
+# Filesystem mini-game helpers
+# ---------------------------------------------------------------------------
+
+def get_node(path: List[str]) -> Dict[str, Any] | None:
+    """Traverse the virtual filesystem following ``path``."""
+    node: Dict[str, Any] | None = FILESYSTEM
+    for part in path:
+        node = node.get("children", {}).get(part) if node else None
+        if not node:
+            return None
+    return node
+
+
+def list_dir(path: List[str]) -> str:
+    node = get_node(path)
+    if not node or node.get("type") != "dir":
+        return "Not a directory."
+    items = []
+    for name, child in sorted(node.get("children", {}).items()):
+        items.append(name + ("/" if child.get("type") == "dir" else ""))
+    return "\n".join(items)
+
+# Per-session state keyed by a CSRF token
+SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+ASCII_ART = r"""
+   ____                            _     
+  / ___| ___ _ __   ___ _ __ __ _| |___ 
+ | |  _ / _ \ '_ \ / _ \ '__/ _` | / __|
+ | |_| |  __/ | | |  __/ | | (_| | \__ \
+  \____|\___|_| |_|\___|_|  \__,_|_|___/
+"""
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -180,6 +220,26 @@ def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/resume", response_class=FileResponse)
+def resume_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "resume.html")
+
+
+@app.get("/projects", response_class=FileResponse)
+def projects_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "projects.html")
+
+
+@app.get("/education", response_class=FileResponse)
+def education_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "education.html")
+
+
+@app.get("/about", response_class=FileResponse)
+def about_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "about.html")
+
+
 @app.get("/api/resume")
 def get_resume() -> Dict[str, Any]:
     return RESUME
@@ -198,3 +258,98 @@ def api_show(section: str, item_id: int) -> Dict[str, str]:
         raise HTTPException(status_code=404, detail="Item not found")
     text = render_details(section, items[item_id - 1])
     return {"text": text}
+
+
+class Command(BaseModel):
+    command: str
+
+
+@app.get("/api/start")
+def api_start() -> Dict[str, Any]:
+    token = secrets.token_hex(16)
+    SESSIONS[token] = {"cwd": []}
+    text = "Type 'help' for commands. Try 'ls' or 'open overview'."
+    return {"ascii_art": ASCII_ART, "text": text, "csrf_token": token}
+
+
+@app.post("/api/command")
+def api_command(cmd: Command, x_csrf_token: str = Header("")) -> Dict[str, Any]:
+    state = SESSIONS.get(x_csrf_token)
+    if state is None:
+        raise HTTPException(status_code=403, detail="Invalid CSRF token")
+    parts = shlex.split(cmd.command)
+    if not parts:
+        return {"text": ""}
+    action = parts[0].lower()
+    cwd = state.get("cwd", [])
+    try:
+        if action == "help":
+            lines = [
+                "Commands:",
+                "ls",
+                "cd <dir>, cd .., cd /",
+                "pwd",
+                "cat <file>",
+                "open <section> [page] [--expand]",
+                "show <section> <id>",
+                "clear",
+            ]
+            return {"lines": lines}
+        if action == "clear":
+            return {"text": "", "clear": True}
+        if action == "ls":
+            text = list_dir(cwd)
+            return {"text": text}
+        if action == "pwd":
+            text = "/" + "/".join(cwd)
+            return {"text": text}
+        if action == "cd" and len(parts) >= 2:
+            arg = parts[1]
+            if arg == "..":
+                if cwd:
+                    cwd.pop()
+            elif arg == "/":
+                cwd.clear()
+            else:
+                node = get_node(cwd)
+                child = node.get("children", {}).get(arg) if node else None
+                if child and child.get("type") == "dir":
+                    cwd.append(arg)
+                else:
+                    return {"error": True, "text": "Not a directory."}
+            text = list_dir(cwd)
+            return {"text": text}
+        if action == "cat" and len(parts) >= 2:
+            filename = parts[1]
+            node = get_node(cwd)
+            child = node.get("children", {}).get(filename) if node else None
+            if child and child.get("type") == "file":
+                return {"text": child.get("content", "")}
+            return {"error": True, "text": "No such file."}
+        if action == "open" and len(parts) >= 2:
+            section = parts[1]
+            page = 1
+            expand = False
+            for token in parts[2:]:
+                if token in {"--expand", "-e"}:
+                    expand = True
+                else:
+                    try:
+                        page = int(token)
+                    except ValueError:
+                        pass
+            text = list_section(section, expand=expand, page=page)
+            return {"text": text}
+        if action == "show" and len(parts) >= 3:
+            section = parts[1]
+            item_id = int(parts[2])
+            items = RESUME.get(section, [])
+            if not isinstance(items, list) or item_id < 1 or item_id > len(items):
+                raise HTTPException(status_code=404, detail="Item not found")
+            text = render_details(section, items[item_id - 1])
+            return {"text": text}
+    except HTTPException:
+        raise
+    except Exception:
+        return {"error": True, "text": "Invalid command"}
+    return {"error": True, "text": "Unknown command"}
