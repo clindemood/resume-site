@@ -89,7 +89,7 @@ resource "aws_lb" "app" {
 
 resource "aws_lb_target_group" "app" {
   name       = "resume-tg"
-  port       = 80
+  port       = 8000
   protocol   = "HTTP"
   vpc_id     = data.aws_vpc.default.id
   target_type = "ip"
@@ -128,8 +128,8 @@ resource "aws_security_group" "ecs" {
   vpc_id = data.aws_vpc.default.id
 
   ingress {
-    from_port       = 80
-    to_port         = 80
+    from_port       = 8000
+    to_port         = 8000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
@@ -156,8 +156,8 @@ resource "aws_ecs_task_definition" "app" {
       image     = "${local.repository_url}:latest"
       essential = true
       portMappings = [{
-        containerPort = 80
-        hostPort      = 80
+        containerPort = 8000
+        hostPort      = 8000
       }]
     }
   ])
@@ -179,7 +179,7 @@ resource "aws_ecs_service" "app" {
   load_balancer {
     target_group_arn = aws_lb_target_group.app.arn
     container_name   = "resume-site"
-    container_port   = 80
+    container_port   = 8000
   }
 
   depends_on = [aws_lb_listener.https]
