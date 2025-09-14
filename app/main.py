@@ -30,6 +30,7 @@ except ImportError:  # pragma: no cover - fallback for script execution
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, constr
 
 try:  # Optional redis support for horizontal scalability
     import redis
@@ -70,6 +71,15 @@ STATIC_DIR = APP_DIR / "static"
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# ---------------------------------------------------------------------------
+# Request models
+# ---------------------------------------------------------------------------
+
+
+class CommandRequest(BaseModel):
+    session_id: str
+    command: constr(max_length=200)
 
 # ---------------------------------------------------------------------------
 # Session state
@@ -894,9 +904,9 @@ def start() -> Dict[str, Any]:
 
 
 @app.post("/api/command")
-async def command(payload: Dict[str, Any]) -> Dict[str, Any]:
-    session_id = payload.get("session_id")
-    cmd = payload.get("command", "").strip()
+async def command(payload: CommandRequest) -> Dict[str, Any]:
+    session_id = payload.session_id
+    cmd = payload.command.strip()
     state = sessions.get(session_id)
     if state is None:
         return {"text": "Invalid session."}
