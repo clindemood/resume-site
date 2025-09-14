@@ -2,3 +2,10 @@ __pycache__/
 *.py[cod]
 *.log
 pytest_cache/
+.env
+.venv/
+venv/
+ENV/
+*.env.*
+dist/
+build/
