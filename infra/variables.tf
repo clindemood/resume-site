@@ -17,3 +17,8 @@ variable "certificate_arn" {
   description = "ARN of the ACM certificate for HTTPS"
   type        = string
 }
+
+variable "session_redis_url" {
+  description = "ARN of the secret or SSM parameter containing the Redis URL for session storage"
+  type        = string
+}

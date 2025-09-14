@@ -177,6 +177,22 @@ resource "aws_ecs_task_definition" "app" {
           "awslogs-stream-prefix" = "ecs"
         }
       }
+      environment = [
+        {
+          name  = "PORT"
+          value = "8000"
+        },
+        {
+          name  = "SESSION_TTL"
+          value = "3600"
+        }
+      ]
+      secrets = [
+        {
+          name      = "SESSION_REDIS_URL"
+          valueFrom = var.session_redis_url
+        }
+      ]
     }
   ])
 }
