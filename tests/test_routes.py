@@ -1,7 +1,28 @@
 from fastapi.testclient import TestClient
 from app.main import app
+from html.parser import HTMLParser
 
 client = TestClient(app)
+
+
+class TextExtractor(HTMLParser):
+    """Simple HTML parser to collect visible text."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._texts: list[str] = []
+
+    def handle_data(self, data: str) -> None:  # pragma: no cover - trivial
+        self._texts.append(data)
+
+    def get_text(self) -> str:
+        return "".join(self._texts)
+
+
+def extract_text(html: str) -> str:
+    parser = TextExtractor()
+    parser.feed(html)
+    return parser.get_text()
 
 
 def test_root_returns_200():
@@ -12,6 +33,10 @@ def test_root_returns_200():
 def test_projects_returns_200():
     response = client.get("/projects")
     assert response.status_code == 200
+    text = extract_text(response.text)
+    # Page should include Projects heading and candidate name in footer
+    assert "Projects" in text
+    assert "Chad Lindemood" in text
 
 
 def test_api_resume_returns_200():
@@ -29,6 +54,10 @@ def test_api_resume_returns_200():
 def test_education_returns_200():
     response = client.get("/education")
     assert response.status_code == 200
+    text = extract_text(response.text)
+    # Verify the page contains expected headings and footer
+    assert "Education" in text
+    assert "Chad Lindemood" in text
 
 
 def test_about_returns_200():
@@ -39,6 +68,9 @@ def test_about_returns_200():
 def test_resume_returns_200():
     response = client.get("/resume")
     assert response.status_code == 200
+    text = extract_text(response.text)
+    # Candidate name should appear in the rendered HTML
+    assert "Chad Lindemood" in text
 
 
 def test_health_returns_200():
