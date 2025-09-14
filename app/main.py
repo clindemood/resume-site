@@ -15,6 +15,7 @@ import json
 import os
 import random
 import shlex
+import shutil
 import subprocess
 import time
 import uuid
@@ -59,16 +60,19 @@ with DATA_PATH.open() as f:
 
 
 def get_last_updated() -> str:
-    try:
-        return (
-            subprocess.check_output(
-                ["git", "log", "-1", "--format=%cs", str(DATA_PATH)]
+    git = shutil.which("git")
+    if git:
+        try:
+            result = subprocess.run(
+                [git, "log", "-1", "--format=%cs", str(DATA_PATH)],
+                check=True,
+                capture_output=True,
+                text=True,
             )
-            .decode()
-            .strip()
-        )
-    except Exception:
-        return datetime.fromtimestamp(DATA_PATH.stat().st_mtime).strftime("%Y-%m-%d")
+            return result.stdout.strip()
+        except (subprocess.CalledProcessError, OSError):
+            pass
+    return datetime.fromtimestamp(DATA_PATH.stat().st_mtime).strftime("%Y-%m-%d")
 
 
 RESUME.setdefault("meta", {})["last_updated"] = get_last_updated()
