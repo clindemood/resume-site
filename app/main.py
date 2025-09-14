@@ -22,6 +22,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
+from .utils import format_date, strip_scheme
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -149,32 +151,10 @@ ITEMS_PER_PAGE = 5
 # Helper formatting utilities
 # ---------------------------------------------------------------------------
 
-def format_date(value: str | None, short: bool = False) -> str:
-    if not value:
-        return "Present"
-    try:
-        dt = datetime.strptime(value, "%Y-%m")
-        month, day = dt.month, 1
-    except ValueError:
-        try:
-            dt = datetime.strptime(value, "%Y-%m-%d")
-            month, day = dt.month, dt.day
-        except ValueError:
-            return value
-    year = dt.year % 100 if short else dt.year
-    return f"{month}/{day}/{year}"
-
-
-def strip_scheme(url: str | None) -> str:
-    if not url:
-        return ""
-    url = url.replace("https://", "").replace("http://", "")
-    if url.startswith("www."):
-        url = url[4:]
-    return url
-
 
 def format_overview() -> str:
+    """Build the overview text shown when a session starts."""
+
     o = RESUME.get("overview", {})
     lines = [
         f"Name: {o.get('name')} | {o.get('title')} | {o.get('location')}",
@@ -187,11 +167,20 @@ def format_overview() -> str:
     return "\n".join(lines)
 
 
-def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, page: int = 1) -> str:
-    """Return a textual representation for ``section``.
+def list_section(
+    state: Dict[str, Any],
+    section: str,
+    *,
+    expand: bool = False,
+    page: int = 1,
+) -> str:
+    """Render a resume section as plain text.
 
-    The state is updated with pagination information so that commands like
-    ``next``/``prev`` can operate on the last view.
+    ``state`` keeps track of pagination so that navigation commands such as
+    ``next`` and ``prev`` know what to display.  The ``section`` argument
+    selects which part of the resume to show (e.g. ``"experience"`` or
+    ``"projects"``).  Setting ``expand`` to ``True`` includes detailed lines for
+    each item.
     """
 
     items: List[Dict[str, Any]] = RESUME.get(section, [])
