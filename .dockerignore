@@ -1,0 +1,30 @@
+# Ignore VCS files and directories
+.git
+.gitattributes
+.gitignore
+
+# Python caches and compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+.env
+
+# Development artifacts
+*.log
+pytest_cache/
+coverage/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Documentation and metadata
+README.md
+CONTRIBUTING.md
+DEPLOYMENT.md
+SITE_SPEC.md
