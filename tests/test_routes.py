@@ -34,6 +34,11 @@ def test_resume_returns_200():
     assert response.status_code == 200
 
 
+def test_health_returns_200():
+    response = client.get("/health")
+    assert response.status_code == 200
+
+
 def test_api_start_and_command_flow():
     start_resp = client.get("/api/start")
     assert start_resp.status_code == 200
