@@ -31,7 +31,7 @@
           "type": "file"
         },
         "2023-05-cloud-foundations-deployment.txt": {
-          "content": "Deployed a small website to both AWS EC2 and Azure App Services.\nConfigured IAM and RBAC roles for secure access management.\nUsed S3 and Azure Storage to host static content and compared performance.",
+          "content": "Deployed a small website to Azure App Service.\nConfigured IAM and RBAC roles for secure access management.\nUsed Azure Storage to host static content and compared performance.",
           "type": "file"
         },
         "2023-06-firewall-intrusion-detection-lab.txt": {
@@ -43,7 +43,7 @@
           "type": "file"
         },
         "2025-09-resume-creation-lab.txt": {
-          "content": "Created an interactive lab using AI tools to build a resume-focused website.\nContainerized the application with Docker and orchestrated it using Kubernetes.\nDeployed the site to AWS for public access and scalability testing.\nThis is that website!",
+          "content": "Created an interactive lab using AI tools to build a resume-focused website.\nContainerized the application with Docker and orchestrated it using Kubernetes.\nDeployed the site to Azure for public access and scalability testing.\nThis is that website!",
           "type": "file"
         }
       },
