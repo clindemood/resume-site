@@ -25,7 +25,12 @@ This repository powers an interactive resume and portfolio site built with FastA
    ```bash
    docker run -p 8000:8000 resume-site
    ```
-3. Open <http://localhost:8000/> in your browser.
+   The server listens on the port specified by the `PORT` environment variable, which
+   defaults to `8000`. To use a different port, set `PORT` and publish the same port:
+   ```bash
+   docker run -e PORT=8080 -p 8080:8080 resume-site
+   ```
+3. Open <http://localhost:8000/> in your browser (replace `8000` with the value of `PORT` if changed).
 
 ### Session storage
 
