@@ -1,9 +1,9 @@
 # Core FastAPI app and ASGI server
-fastapi~=0.111.0
-uvicorn[standard]~=0.30.0
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
 
 # Optional session store using Redis
-redis~=5.0.0
+redis==5.0.0
 
 # Async file access for serving static files
-aiofiles~=23.2.0
+aiofiles==23.2.0
