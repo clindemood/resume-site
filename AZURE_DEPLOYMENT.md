@@ -67,8 +67,10 @@ the FastAPI app:
 az webapp config set \
   --resource-group resume-site-rg \
   --name <unique-app-name> \
-  --startup-file "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  --startup-file "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 ```
+
+This command uses the `PORT` environment variable provided by App Service to choose the correct port.
 
 Add any required environment variables with `az webapp config appsettings set`.
 
