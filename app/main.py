@@ -22,9 +22,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+
+try:  # Optional import for setting security headers
+    from secure import SecureHeaders  # type: ignore
+except Exception:  # pragma: no cover - secure is optional
+    SecureHeaders = None  # type: ignore
 
 try:  # Optional redis support for horizontal scalability
     import redis
@@ -64,6 +70,51 @@ STATIC_DIR = APP_DIR / "static"
 # ---------------------------------------------------------------------------
 
 app = FastAPI()
+
+# ---------------------------------------------------------------------------
+# Security headers and CORS
+# ---------------------------------------------------------------------------
+
+# Configure CORS with explicit allow_origins list from environment
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Security headers equivalent to the `secure` package
+_SECURE_HEADERS = {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+    "Content-Security-Policy": "default-src 'self'",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+}
+
+if SecureHeaders:
+    _secure = SecureHeaders()
+
+    def _apply_secure_headers(response):  # pragma: no cover - depends on optional package
+        _secure.fastapi(response)  # type: ignore[attr-defined]
+        return response
+else:
+    def _apply_secure_headers(response):
+        for k, v in _SECURE_HEADERS.items():
+            response.headers.setdefault(k, v)
+        return response
+
+
+@app.middleware("http")
+async def set_secure_headers(request: Request, call_next):
+    response = await call_next(request)
+    return _apply_secure_headers(response)
+
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # ---------------------------------------------------------------------------
