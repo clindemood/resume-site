@@ -110,10 +110,14 @@ _SECURE_HEADERS = {
 if SecureHeaders:
     _secure = SecureHeaders()
 
-    def _apply_secure_headers(response):  # pragma: no cover - depends on optional package
+    def _apply_secure_headers(
+        response,
+    ):  # pragma: no cover - depends on optional package
         _secure.fastapi(response)  # type: ignore[attr-defined]
         return response
+
 else:
+
     def _apply_secure_headers(response):
         for k, v in _SECURE_HEADERS.items():
             response.headers.setdefault(k, v)
@@ -124,6 +128,7 @@ else:
 async def set_secure_headers(request: Request, call_next):
     response = await call_next(request)
     return _apply_secure_headers(response)
+
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -152,6 +157,7 @@ async def rate_limit(request: Request, call_next):
     response = await call_next(request)
     return response
 
+
 # ---------------------------------------------------------------------------
 # Session state
 # ---------------------------------------------------------------------------
@@ -166,6 +172,7 @@ MAX_SESSIONS = int(os.getenv("MAX_SESSIONS", "100"))
 REDIS_URL = os.getenv("SESSION_REDIS_URL")
 
 if redis and REDIS_URL:
+
     class RedisSessions(dict):  # minimal mapping using Redis for storage
         def __init__(self) -> None:
             self.client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
@@ -229,9 +236,7 @@ def evict_oldest_session() -> None:
     """Remove the oldest session when the limit is exceeded."""
 
     try:
-        oldest_sid, _ = min(
-            sessions.items(), key=lambda item: item[1].get("_ts", 0)
-        )
+        oldest_sid, _ = min(sessions.items(), key=lambda item: item[1].get("_ts", 0))
     except ValueError:  # no sessions
         return
     del sessions[oldest_sid]
@@ -246,8 +251,11 @@ async def session_cleanup_loop() -> None:
 
 
 if not USE_REDIS:
+
     @app.on_event("startup")
-    async def _startup() -> None:  # pragma: no cover - behaviour tested via prune_sessions
+    async def _startup() -> (
+        None
+    ):  # pragma: no cover - behaviour tested via prune_sessions
         asyncio.create_task(session_cleanup_loop())
 
 
@@ -278,9 +286,11 @@ class CommandResponse(BaseModel):
     class Config:
         extra = "allow"
 
+
 # ---------------------------------------------------------------------------
 # Helper formatting utilities
 # ---------------------------------------------------------------------------
+
 
 def format_date(value: str | None, short: bool = False) -> str:
     if not value:
@@ -320,7 +330,9 @@ def format_overview() -> str:
     return "\n".join(lines)
 
 
-def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, page: int = 1) -> str:
+def list_section(
+    state: Dict[str, Any], section: str, *, expand: bool = False, page: int = 1
+) -> str:
     """Return a textual representation for ``section``.
 
     The state is updated with pagination information so that commands like
@@ -344,7 +356,9 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
 
     state["current_section"] = section
     state["page"] = page
-    state["last_items"] = {str(i): item for i, item in enumerate(page_items, start=start + 1)}
+    state["last_items"] = {
+        str(i): item for i, item in enumerate(page_items, start=start + 1)
+    }
 
     lines: List[str] = []
     for idx, item in state["last_items"].items():
@@ -368,9 +382,7 @@ def list_section(state: Dict[str, Any], section: str, *, expand: bool = False, p
         if expand:
             lines.append(render_details(section, item))
     hint = " • type 'next' to see more" if page < total_pages else ""
-    lines.append(
-        f"Page {page}/{total_pages} • use 'show <id>' or <id>{hint}"
-    )
+    lines.append(f"Page {page}/{total_pages} • use 'show <id>' or <id>{hint}")
     return "\n".join(lines)
 
 
@@ -424,7 +436,9 @@ def render_details(section: str, item: Dict[str, Any]) -> str:
 
 def search_resume(query: str, section: str | None = None) -> List[str]:
     query = query.lower()
-    sections = [section] if section else [k for k, v in RESUME.items() if isinstance(v, list)]
+    sections = (
+        [section] if section else [k for k, v in RESUME.items() if isinstance(v, list)]
+    )
     results: List[str] = []
     for sec in sections:
         items = RESUME.get(sec, [])
@@ -435,11 +449,15 @@ def search_resume(query: str, section: str | None = None) -> List[str]:
                 results.append(f"[{sec}] {label}")
     return results
 
+
 # ---------------------------------------------------------------------------
 # Command handlers
 # ---------------------------------------------------------------------------
 
-def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> Dict[str, Any]:
+
+def handle_secret_game(
+    state: Dict[str, Any], command: str, args: List[str]
+) -> Dict[str, Any]:
     """Handle commands for the secret mini game."""
 
     # Game state ---------------------------------------------------------
@@ -552,7 +570,9 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         }
     if command == "look" and args:
         target = args[0].lower()
-        key = match_key(target, enemy_descriptions) or match_key(target, item_descriptions)
+        key = match_key(target, enemy_descriptions) or match_key(
+            target, item_descriptions
+        )
         if key in enemy_descriptions:
             return {"text": enemy_descriptions[key]}
         if key in item_descriptions:
@@ -599,7 +619,9 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
         while enemy_hp > 0 and player_hp > 0:
             player_hit = random.randint(4, 8)
             enemy_hp -= player_hit
-            lines.append(random.choice(player_flavor[target_key]).format(dmg=player_hit))
+            lines.append(
+                random.choice(player_flavor[target_key]).format(dmg=player_hit)
+            )
             lines.append(f"{target_key.capitalize()} HP: {max(enemy_hp,0)}")
             if enemy_hp <= 0:
                 defeated.add(target_key)
@@ -610,7 +632,9 @@ def handle_secret_game(state: Dict[str, Any], command: str, args: List[str]) -> 
                 }[target_key]
                 game["equipment"].append(loot)
                 if target_key == "printer":
-                    lines.append(f"The printer jams one last time and erupts in a cloud of toner! Loot: {loot}.")
+                    lines.append(
+                        f"The printer jams one last time and erupts in a cloud of toner! Loot: {loot}."
+                    )
                 elif target_key == "server":
                     lines.append(f"The server blue-screens! Loot: {loot}.")
                 else:
@@ -658,7 +682,13 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     # Basic navigation -----------------------------------------------------
     if command == "help":
-        return {"text": HELP_TEXT if not args else COMMAND_HELP.get(args[0], "No help available.")}
+        return {
+            "text": (
+                HELP_TEXT
+                if not args
+                else COMMAND_HELP.get(args[0], "No help available.")
+            )
+        }
 
     if command == "open" and args:
         if args[0] == "secret":
@@ -743,7 +773,9 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
                 field, value = expr.split("=", 1)
                 field = field.strip()
                 value = value.strip()
-                results = [i for i in results if str(i.get(field, "")).lower() == value.lower()]
+                results = [
+                    i for i in results if str(i.get(field, "")).lower() == value.lower()
+                ]
         lines = []
         for item in results:
             label = item.get("company") or item.get("name")
@@ -835,7 +867,10 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     if command == "versions":
         versions = RESUME.get("versions", [])
         if "--list" in args or not args:
-            return {"text": " • ".join(versions) + f" • last_updated: {RESUME['meta']['last_updated']}"}
+            return {
+                "text": " • ".join(versions)
+                + f" • last_updated: {RESUME['meta']['last_updated']}"
+            }
         if "--diff" in args:
             return {"text": "Diff not implemented."}
 
@@ -907,6 +942,7 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     return {"text": "Unknown command."}
 
+
 # ---------------------------------------------------------------------------
 # Help text
 # ---------------------------------------------------------------------------
@@ -956,9 +992,11 @@ COMMAND_HELP = {
 # HTTP routes
 # ---------------------------------------------------------------------------
 
+
 @app.get("/health")
 def health() -> Dict[str, str]:
     return {"status": "ok"}
+
 
 @app.get("/", response_class=FileResponse)
 def index() -> FileResponse:
@@ -1006,14 +1044,14 @@ def start(response: Response) -> StartResponse:
             ".                               .       .       .       .       .       .",
             "   .        .        .        .        .        .        .        .        .",
             "     .         .         .        _......____._        .         .",
-            "   .          .          . ..--'\"\" .           \"\"\"\"\"\"---...          .",
-            "                   _...--\"\"        ................       `-.              .",
+            '   .          .          . ..--\'"" .           """"""---...          .',
+            '                   _...--""        ................       `-.              .',
             "                .-'        ...:'::::;:::%:.::::::_;;:...     `-.",
             "             .-'       ..::::'''''   _...---'\"\"\"\":::+;_::.      `.      .",
             "  .        .' .    ..::::'      _.-\"\"               :::)::.       `.",
             "         .      ..;:::'     _.-'         .             f::'::    o  _",
-            "        /     .:::%'  .  .-\"                        .-.  ::;;:.   /\" \"x",
-            "  .   .'  \"\"::.::'    .-\"     _.--'\"\"\"-.           (   )  ::.::  |_.-' |",
+            '        /     .:::%\'  .  .-"                        .-.  ::;;:.   /" "x',
+            '  .   .\'  ""::.::\'    .-"     _.--\'"""-.           (   )  ::.::  |_.-\' |',
             "     .'    ::;:'    .'     .-\" .d@@b.   \\    .    . `-'   ::%::   \\_ _/    .",
             "    .'    :,::'    /   . _'    8@@@@8   j      .-'       :::::      \" o",
             "    | .  :.%:' .  j     (_)    `@@@P'  .'   .-\"         ::.::    .  f",
@@ -1025,8 +1063,8 @@ def start(response: Response) -> StartResponse:
             "       \\    .   ``:::%::`::.......:::::%::.::::''       .-'",
             "      . `.        . ``::::::%::::.::;;:::::'''      _.-'          .",
             "  .       `-..     .    .   ````'''''         . _.-'     .          .",
-            "         .    \"\"--...____    .   ______......--' .         .         .",
-            "  .        .        .    \"\"\"\"\"\"\"\"     .        .        .        .        .",
+            '         .    ""--...____    .   ______......--\' .         .         .',
+            '  .        .        .    """"""""     .        .        .        .        .',
             " .       .       .       .       .       .       .       .       .",
             "     .      .      .      .      .      .      .      .      .      .      .",
         ]
@@ -1053,6 +1091,9 @@ async def command(
     if csrf_token is None or csrf_token != state.get("csrf"):
         raise HTTPException(status_code=403, detail="Invalid CSRF token.")
     state["_ts"] = time.time()
-    result = handle_command(state, req.command.strip())
+    try:
+        result = handle_command(state, req.command.strip())
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid command.")
     sessions[str(session_id)] = state
     return result
