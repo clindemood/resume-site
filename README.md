@@ -1,59 +1,15 @@
 # Resume Site
 
-This repository powers an interactive resume and portfolio site built with FastAPI and vanilla HTML/JS.
-
-## Running locally
+## Setup
 
 1. Create a virtual environment and install dependencies:
    ```bash
    python -m venv .venv && source .venv/bin/activate
    pip install -r requirements.txt
    ```
-2. Launch the development server:
+2. Start the server:
    ```bash
    uvicorn app.main:app --reload
    ```
-3. Visit <http://localhost:8000/> to browse the site.
 
-
-## Running with Docker
-
-1. Build the image:
-   ```bash
-   docker build -t resume-site .
-   ```
-2. Run the container:
-   ```bash
-   docker run -p 8000:8000 resume-site
-   ```
-   The server listens on the port specified by the `PORT` environment variable, which
-   defaults to `8000`. To use a different port, set `PORT` and publish the same port:
-   ```bash
-   docker run -e PORT=8080 -p 8080:8080 resume-site
-   ```
-3. Open <http://localhost:8000/> in your browser (replace `8000` with the value of `PORT` if changed).
-
-## Environment variables
-
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
-| `PORT` | `8000` | Port that the server listens on. |
-| `SESSION_TTL` | `3600` | Session expiration time in seconds. |
-| `SESSION_REDIS_URL` | _(none)_ | Redis connection URL for session storage. Provide this when deploying to share sessions across multiple tasks. |
-
-When deploying, ensure `SESSION_REDIS_URL` is set so sessions can be shared across multiple tasks.
-
-## Updating resume data
-
-The site reads its resume information from JSON files under `app/`.
-
-1. Edit `app/resume.json` with your latest overview, experience, projects, and skills.
-2. Adjust `app/filesystem.json` if you want the CLI file-system demo to reflect the same details.
-3. After editing, format the JSON for consistency:
-   ```bash
-   jq --sort-keys '.' app/resume.json > tmp && mv tmp app/resume.json
-   jq --sort-keys '.' app/filesystem.json > tmp && mv tmp app/filesystem.json
-   ```
-4. Commit and deploy the changes.
-
-
+The application will be available at <http://localhost:8000/>.
