@@ -18,6 +18,11 @@ ENV/
 pytest_cache/
 coverage/
 
+# Non-runtime directories
+tests/
+.github/
+infra/
+
 # IDE and OS files
 .vscode/
 .idea/
