@@ -39,32 +39,6 @@ This project can be hosted on AWS in a few different ways. Below are two common 
    aws route53 change-resource-record-sets --hosted-zone-id <zone-id> --change-batch file://dns.json
    ```
 
-## Infrastructure as Code
-
-Infrastructure resources for running the container on ECS Fargate are codified
-under the [`infra/`](infra) directory using Terraform. The configuration
-creates an ECR repository, ECS cluster and service, an Application Load
-Balancer, and Route53 records.
-
-Example usage:
-
-```bash
-cd infra
-terraform init
-terraform apply \
-  -var="aws_region=us-east-1" \
-  -var="aws_account_id=123456789012" \
-  -var="domain_name=example.com" \
-  -var="certificate_arn=arn:aws:acm:us-east-1:123456789012:certificate/abc"
-
-# When finished
-terraform destroy \
-  -var="aws_region=us-east-1" \
-  -var="aws_account_id=123456789012" \
-  -var="domain_name=example.com" \
-  -var="certificate_arn=arn:aws:acm:us-east-1:123456789012:certificate/abc"
-```
-
 ## Option B – Static hosting + serverless API
 
 1. Upload files under `app/static/` to an S3 bucket configured for static website hosting or fronted by CloudFront.
