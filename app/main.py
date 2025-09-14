@@ -823,6 +823,10 @@ COMMAND_HELP = {
 # HTTP routes
 # ---------------------------------------------------------------------------
 
+@app.get("/health")
+def health() -> Dict[str, str]:
+    return {"status": "ok"}
+
 @app.get("/", response_class=FileResponse)
 def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
