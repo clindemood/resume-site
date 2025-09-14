@@ -1,6 +1,9 @@
 async function fetchResume() {
   try {
     const res = await fetch('/api/resume');
+    if (!res.ok) {
+      throw new Error(`Failed to fetch resume: ${res.status} ${res.statusText}`);
+    }
     return await res.json();
   } catch (err) {
     console.error(err);
