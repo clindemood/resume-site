@@ -89,9 +89,9 @@ main.centered {
 /* CLI container styling */
 #game-container {
   background: #111;
-  color: #33ff33;
+  color: #7bc47f;
   padding: 10px;
-  border: 1px solid #00ffff;
+  border: 1px solid #4ca1af;
   border-radius: 4px;
   max-width: 600px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -99,7 +99,7 @@ main.centered {
 
 .instructions {
   margin: 0 0 1rem 0;
-  color: #00ffff;
+  color: #4ca1af;
   text-align: center;
   font-family: monospace;
 }
@@ -115,16 +115,16 @@ main.centered {
   white-space: pre-wrap;
   background: #000;
   font-family: monospace;
-  border: 1px solid #00ffff;
-  color: #33ff33;
+  border: 1px solid #4ca1af;
+  color: #7bc47f;
 }
 
 #terminal .input {
-  color: #00ffff;
+  color: #4ca1af;
 }
 
 #terminal .output {
-  color: #33ff33;
+  color: #7bc47f;
 }
 
 #terminal .ascii {
@@ -169,14 +169,14 @@ main.centered {
 }
 
 #command-form span {
-  color: #00ffff;
+  color: #4ca1af;
   margin-right: 5px;
 }
 
 #command {
   flex: 1;
   background: #000;
-  color: #00ffff;
+  color: #4ca1af;
   border: none;
   outline: none;
   font-family: monospace;
@@ -185,8 +185,8 @@ main.centered {
 button {
   margin-right: 5px;
   background: #111;
-  color: #00ffff;
-  border: 1px solid #00ffff;
+  color: #4ca1af;
+  border: 1px solid #4ca1af;
   font-family: monospace;
   border-radius: 4px;
   padding: 4px 8px;
@@ -194,7 +194,7 @@ button {
 }
 
 button:hover {
-    background: #00ffff;
+    background: #4ca1af;
     color: #000;
   }
 
