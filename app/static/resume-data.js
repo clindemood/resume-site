@@ -17,14 +17,6 @@ function formatDate(str, short = false) {
   return `${m}/${d}/${year}`;
 }
 
-export async function loadAbout() {
-  const r = await fetchResume();
-  const p = document.getElementById('about-text');
-  if (p) {
-    p.textContent = r.overview.summary;
-  }
-}
-
 export async function loadProjects() {
   const r = await fetchResume();
   const list = document.getElementById('projects-list');

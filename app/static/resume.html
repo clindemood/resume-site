@@ -6,19 +6,12 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/resume">Resume</a>
-      <a href="/projects">Projects</a>
-      <a href="/education">Education</a>
-      <a href="/about">About</a>
-    </nav>
-  </header>
+  <header id="site-nav"></header>
   <main id="resume-container"></main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script src="/static/nav.js"></script>
     <script type="module">
       import {loadResume} from '/static/resume-data.js';
       loadResume();
