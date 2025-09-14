@@ -165,6 +165,7 @@ resource "aws_ecs_task_definition" "app" {
       name      = "resume-site"
       image     = "${local.repository_url}:latest"
       essential = true
+      readonlyRootFilesystem = true
       portMappings = [{
         containerPort = 8000
         hostPort      = 8000
