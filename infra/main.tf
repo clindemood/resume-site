@@ -16,7 +16,12 @@ locals {
 }
 
 resource "aws_ecr_repository" "app" {
-  name = "resume-site"
+  name                 = "resume-site"
+  image_tag_mutability = "IMMUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
 
 resource "aws_ecs_cluster" "main" {
@@ -62,14 +67,14 @@ resource "aws_security_group" "alb" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.alb_ingress_cidrs
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.alb_ingress_cidrs
   }
 
   egress {
@@ -80,11 +85,46 @@ resource "aws_security_group" "alb" {
   }
 }
 
+resource "aws_s3_bucket" "lb_logs" {
+  bucket = "resume-alb-logs-${var.aws_account_id}"
+}
+
+resource "aws_s3_bucket_policy" "lb_logs" {
+  bucket = aws_s3_bucket.lb_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid      = "AWSALBLogDeliveryWrite",
+        Effect   = "Allow",
+        Principal = { Service = "logdelivery.elb.amazonaws.com" },
+        Action   = "s3:PutObject",
+        Resource = "${aws_s3_bucket.lb_logs.arn}/*"
+      },
+      {
+        Sid      = "AWSALBLogDeliveryCheck",
+        Effect   = "Allow",
+        Principal = { Service = "logdelivery.elb.amazonaws.com" },
+        Action   = "s3:GetBucketAcl",
+        Resource = aws_s3_bucket.lb_logs.arn
+      }
+    ]
+  })
+}
+
 resource "aws_lb" "app" {
   name               = "resume-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = data.aws_subnets.default.ids
+
+  access_logs {
+    bucket  = aws_s3_bucket.lb_logs.id
+    prefix  = "alb"
+    enabled = true
+  }
+
+  depends_on = [aws_s3_bucket_policy.lb_logs]
 }
 
 resource "aws_lb_target_group" "app" {

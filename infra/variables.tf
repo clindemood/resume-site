@@ -22,3 +22,9 @@ variable "session_redis_url" {
   description = "ARN of the secret or SSM parameter containing the Redis URL for session storage"
   type        = string
 }
+
+variable "alb_ingress_cidrs" {
+  description = "Allowed CIDR blocks for ALB ingress rules"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
