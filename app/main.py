@@ -10,11 +10,14 @@ resume management system.
 
 from __future__ import annotations
 
+import asyncio
 import json
+import os
 import random
 import shlex
-import uuid
 import subprocess
+import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
@@ -22,6 +25,11 @@ from typing import Any, Dict, List
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+
+try:  # Optional redis support for horizontal scalability
+    import redis
+except Exception:  # pragma: no cover - redis is optional
+    redis = None
 
 # ---------------------------------------------------------------------------
 # Data loading
@@ -63,8 +71,77 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # ---------------------------------------------------------------------------
 
 # Each session keeps track of the current section view, pagination state,
-# and auxiliary data such as expanded items or user notes.
-sessions: Dict[str, Dict[str, Any]] = {}
+# and auxiliary data such as expanded items or user notes.  Sessions can be
+# stored either in memory (default) or in Redis when ``SESSION_REDIS_URL`` is
+# provided in the environment.
+
+SESSION_TTL = int(os.getenv("SESSION_TTL", "3600"))
+REDIS_URL = os.getenv("SESSION_REDIS_URL")
+
+if redis and REDIS_URL:
+    class RedisSessions(dict):  # minimal mapping using Redis for storage
+        def __init__(self) -> None:
+            self.client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+
+        def __getitem__(self, key: str) -> Dict[str, Any]:
+            data = self.client.get(key)
+            if data is None:
+                raise KeyError(key)
+            return json.loads(data)
+
+        def __setitem__(self, key: str, value: Dict[str, Any]) -> None:
+            self.client.setex(key, SESSION_TTL, json.dumps(value))
+
+        def get(self, key: str, default: Any = None) -> Dict[str, Any] | None:
+            try:
+                return self.__getitem__(key)
+            except KeyError:
+                return default
+
+        def __delitem__(self, key: str) -> None:
+            self.client.delete(key)
+
+        def items(self):  # pragma: no cover - only used by cleanup when memory store
+            for key in self.client.scan_iter():
+                data = self.client.get(key)
+                if data:
+                    yield key, json.loads(data)
+
+    sessions: Dict[str, Dict[str, Any]] = RedisSessions()
+    USE_REDIS = True
+else:  # in-memory store
+    sessions: Dict[str, Dict[str, Any]] = {}
+    USE_REDIS = False
+
+
+def prune_sessions(now: float | None = None) -> None:
+    """Remove expired sessions from the in-memory store."""
+
+    if USE_REDIS:  # Redis handles TTL internally
+        return
+    now = now or time.time()
+    expired = [
+        sid
+        for sid, state in list(sessions.items())
+        if now - state.get("_ts", now) > SESSION_TTL
+    ]
+    for sid in expired:
+        del sessions[sid]
+
+
+async def session_cleanup_loop() -> None:
+    """Background task to periodically prune expired sessions."""
+
+    while True:  # pragma: no cover - simple infinite loop
+        await asyncio.sleep(SESSION_TTL)
+        prune_sessions()
+
+
+if not USE_REDIS:
+    @app.on_event("startup")
+    async def _startup() -> None:  # pragma: no cover - behaviour tested via prune_sessions
+        asyncio.create_task(session_cleanup_loop())
+
 
 ITEMS_PER_PAGE = 5
 
@@ -780,7 +857,7 @@ def get_resume() -> Dict[str, Any]:
 def start() -> Dict[str, Any]:
     """Start a new CLI session."""
     session_id = str(uuid.uuid4())
-    sessions[session_id] = {}
+    sessions[session_id] = {"_ts": time.time()}
     ascii_art = "\n".join(
         [
             " .      .      .      .      .      .      .      .      .      .      .",
@@ -827,4 +904,7 @@ async def command(payload: Dict[str, Any]) -> Dict[str, Any]:
     state = sessions.get(session_id)
     if state is None:
         return {"text": "Invalid session."}
-    return handle_command(state, cmd)
+    state["_ts"] = time.time()
+    result = handle_command(state, cmd)
+    sessions[session_id] = state
+    return result

@@ -58,3 +58,13 @@ def test_api_start_and_command_flow():
     )
     assert invalid_resp.status_code == 200
     assert invalid_resp.json()["text"] == "Unknown id."
+
+
+def test_prune_sessions_removes_old():
+    from app.main import SESSION_TTL, prune_sessions, sessions
+    import time
+
+    old_id = "expired"
+    sessions[old_id] = {"_ts": time.time() - (SESSION_TTL + 1)}
+    prune_sessions()
+    assert old_id not in sessions
