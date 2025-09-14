@@ -60,6 +60,13 @@ async function sendCommand(cmd) {
   });
   const data = await res.json();
   print('$ ' + cmd, 'input');
+  if (!res.ok) {
+    const msg = Array.isArray(data.detail)
+      ? data.detail.map(d => d.msg).join(' ')
+      : 'Invalid input.';
+    print(msg, 'error');
+    return;
+  }
   if (data.clear) {
     terminal.textContent = '';
   }
