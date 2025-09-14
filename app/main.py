@@ -36,6 +36,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+
 try:  # Optional import for setting security headers
     from secure import SecureHeaders  # type: ignore
 except Exception:  # pragma: no cover - secure is optional
@@ -127,6 +128,31 @@ async def set_secure_headers(request: Request, call_next):
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # ---------------------------------------------------------------------------
+# Rate limiting
+# ---------------------------------------------------------------------------
+
+RATE_LIMIT_COUNT = int(os.getenv("RATE_LIMIT_COUNT", "10"))
+RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", "60"))
+_rate_limits: Dict[str, List[float]] = {}
+
+
+@app.middleware("http")
+async def rate_limit(request: Request, call_next):
+    if request.url.path in {"/api/start", "/api/command"}:
+        ip = request.headers.get("X-Forwarded-For") or request.client.host or ""
+        key = f"{ip}:{request.url.path}"
+        now = time.time()
+        window_start = now - RATE_LIMIT_WINDOW
+        timestamps = [t for t in _rate_limits.get(key, []) if t > window_start]
+        if len(timestamps) >= RATE_LIMIT_COUNT:
+            response = Response(status_code=429)
+            return _apply_secure_headers(response)
+        timestamps.append(now)
+        _rate_limits[key] = timestamps
+    response = await call_next(request)
+    return response
+
+# ---------------------------------------------------------------------------
 # Session state
 # ---------------------------------------------------------------------------
 
@@ -136,6 +162,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # provided in the environment.
 
 SESSION_TTL = int(os.getenv("SESSION_TTL", "3600"))
+MAX_SESSIONS = int(os.getenv("MAX_SESSIONS", "100"))
 REDIS_URL = os.getenv("SESSION_REDIS_URL")
 
 if redis and REDIS_URL:
@@ -161,11 +188,14 @@ if redis and REDIS_URL:
         def __delitem__(self, key: str) -> None:
             self.client.delete(key)
 
-        def items(self):  # pragma: no cover - only used by cleanup when memory store
+        def items(self):  # pragma: no cover - used for iteration
             for key in self.client.scan_iter():
                 data = self.client.get(key)
                 if data:
                     yield key, json.loads(data)
+
+        def __len__(self) -> int:  # pragma: no cover - simple wrapper
+            return int(self.client.dbsize())
 
     sessions: Dict[str, Dict[str, Any]] = RedisSessions()
     USE_REDIS = True
@@ -187,6 +217,24 @@ def prune_sessions(now: float | None = None) -> None:
     ]
     for sid in expired:
         del sessions[sid]
+
+
+def session_count() -> int:
+    """Return the number of active sessions."""
+
+    return len(sessions)
+
+
+def evict_oldest_session() -> None:
+    """Remove the oldest session when the limit is exceeded."""
+
+    try:
+        oldest_sid, _ = min(
+            sessions.items(), key=lambda item: item[1].get("_ts", 0)
+        )
+    except ValueError:  # no sessions
+        return
+    del sessions[oldest_sid]
 
 
 async def session_cleanup_loop() -> None:
@@ -948,6 +996,8 @@ def start(response: Response) -> StartResponse:
     session_id = str(uuid.uuid4())
     csrf_token = secrets.token_hex(16)
     sessions[session_id] = {"_ts": time.time(), "csrf": csrf_token}
+    while session_count() > MAX_SESSIONS:
+        evict_oldest_session()
     response.set_cookie("session_id", session_id, httponly=True, samesite="strict")
     response.set_cookie("csrf_token", csrf_token, httponly=False, samesite="strict")
     ascii_art = "\n".join(
