@@ -7,7 +7,7 @@ This repository powers an interactive resume and portfolio site built with FastA
 1. Create a virtual environment and install dependencies:
    ```bash
    python -m venv .venv && source .venv/bin/activate
-   pip install fastapi uvicorn
+   pip install -r requirements.txt
    ```
 2. Launch the development server:
    ```bash
@@ -26,6 +26,12 @@ This repository powers an interactive resume and portfolio site built with FastA
    docker run -p 8000:8000 resume-site
    ```
 3. Open <http://localhost:8000/> in your browser.
+
+### Session storage
+
+Sessions are stored in memory and automatically pruned after ``SESSION_TTL`` seconds
+(default: 3600).  For horizontal scalability you can provide a Redis instance by
+setting ``SESSION_REDIS_URL``.
 
 ## Updating resume data
 
