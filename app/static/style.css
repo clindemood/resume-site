@@ -88,15 +88,15 @@ main.centered {
 
 /* CLI container styling */
 #game-container {
-  --ibm-terminal-bg: #00140d;
-  --ibm-terminal-surface: #000b06;
-  --ibm-terminal-text: #44ff61;
-  --ibm-terminal-secondary: #6bff8c;
-  --ibm-terminal-border: #1aff3a;
-  --ibm-terminal-cyan: #4ef3ff;
-  --ibm-terminal-yellow: #fff17a;
-  --ibm-terminal-amber: #ffb86b;
-  --ibm-terminal-red: #ff5f56;
+  --ibm-terminal-bg: #000000;
+  --ibm-terminal-surface: #001100;
+  --ibm-terminal-text: #00ff00;
+  --ibm-terminal-secondary: #99ff99;
+  --ibm-terminal-border: #00ff00;
+  --ibm-terminal-cyan: #00ffff;
+  --ibm-terminal-yellow: #ffff00;
+  --ibm-terminal-amber: #ffbf00;
+  --ibm-terminal-red: #ff0000;
 
   background: var(--ibm-terminal-bg);
   color: var(--ibm-terminal-text);
@@ -204,7 +204,7 @@ main.centered {
 
 #game-container button:hover {
   background: var(--ibm-terminal-secondary);
-  color: #00140d;
+  color: var(--ibm-terminal-bg);
   border-color: var(--ibm-terminal-secondary);
 }
 
