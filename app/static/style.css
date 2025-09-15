@@ -88,18 +88,28 @@ main.centered {
 
 /* CLI container styling */
 #game-container {
-  background: #111;
-  color: #7bc47f;
+  --ibm-terminal-bg: #00140d;
+  --ibm-terminal-surface: #000b06;
+  --ibm-terminal-text: #44ff61;
+  --ibm-terminal-secondary: #6bff8c;
+  --ibm-terminal-border: #1aff3a;
+  --ibm-terminal-cyan: #4ef3ff;
+  --ibm-terminal-yellow: #fff17a;
+  --ibm-terminal-amber: #ffb86b;
+  --ibm-terminal-red: #ff5f56;
+
+  background: var(--ibm-terminal-bg);
+  color: var(--ibm-terminal-text);
   padding: 10px;
-  border: 1px solid #4ca1af;
+  border: 1px solid var(--ibm-terminal-border);
   border-radius: 4px;
   max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
 .instructions {
   margin: 0 0 1rem 0;
-  color: #4ca1af;
+  color: var(--ibm-terminal-secondary);
   text-align: center;
   font-family: monospace;
 }
@@ -113,53 +123,42 @@ main.centered {
   height: 60vh;
   overflow-y: auto;
   white-space: pre-wrap;
-  background: #000;
+  background: var(--ibm-terminal-surface);
   font-family: monospace;
-  border: 1px solid #4ca1af;
-  color: #7bc47f;
+  border: 1px solid var(--ibm-terminal-border);
+  color: var(--ibm-terminal-text);
 }
 
 #terminal .input {
-  color: #4ca1af;
+  color: var(--ibm-terminal-secondary);
 }
 
 #terminal .output {
-  color: #7bc47f;
+  color: var(--ibm-terminal-text);
 }
 
 #terminal .ascii {
-
-  background: linear-gradient(
-    to right,
-    #ff5555,
-    #f1fa8c,
-    #50fa7b,
-    #8be9fd,
-    #bd93f9,
-    #ff79c6
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--ibm-terminal-text);
 }
 
 #terminal .error {
-  color: #ff5555;
+  color: var(--ibm-terminal-red);
 }
 
 #terminal .bracket {
-  color: #ff79c6;
+  color: var(--ibm-terminal-cyan);
 }
 
 #terminal .label {
-  color: #f1fa8c;
+  color: var(--ibm-terminal-yellow);
 }
 
 #terminal .number {
-  color: #bd93f9;
+  color: var(--ibm-terminal-cyan);
 }
 
 #terminal .link {
-  color: #8be9fd;
+  color: var(--ibm-terminal-amber);
   text-decoration: underline;
 }
 
@@ -169,34 +168,35 @@ main.centered {
 }
 
 #command-form span {
-  color: #4ca1af;
+  color: var(--ibm-terminal-secondary);
   margin-right: 5px;
 }
 
 #command {
   flex: 1;
-  background: #000;
-  color: #4ca1af;
+  background: var(--ibm-terminal-surface);
+  color: var(--ibm-terminal-secondary);
   border: none;
   outline: none;
   font-family: monospace;
 }
 
-button {
+#game-container button {
   margin-right: 5px;
-  background: #111;
-  color: #4ca1af;
-  border: 1px solid #4ca1af;
+  background: var(--ibm-terminal-surface);
+  color: var(--ibm-terminal-secondary);
+  border: 1px solid var(--ibm-terminal-border);
   font-family: monospace;
   border-radius: 4px;
   padding: 4px 8px;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, border 0.2s;
 }
 
-button:hover {
-    background: #4ca1af;
-    color: #000;
-  }
+#game-container button:hover {
+  background: var(--ibm-terminal-secondary);
+  color: #00140d;
+  border-color: var(--ibm-terminal-secondary);
+}
 
 .about-content {
   display: flex;
