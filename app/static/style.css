@@ -138,7 +138,17 @@ main.centered {
 }
 
 #terminal .ascii {
-  color: var(--ibm-terminal-text);
+  background: linear-gradient(
+    to right,
+    #ff5555,
+    #f1fa8c,
+    #50fa7b,
+    #8be9fd,
+    #bd93f9,
+    #ff79c6
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 #terminal .error {
