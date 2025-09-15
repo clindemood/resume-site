@@ -127,7 +127,7 @@ main.centered {
   font-family: monospace;
   border: 1px solid var(--ibm-terminal-border);
   color: var(--ibm-terminal-text);
-  scrollbar-color: #000000 var(--ibm-terminal-surface);
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.05);
 }
 
 #terminal::-webkit-scrollbar {
@@ -135,19 +135,19 @@ main.centered {
 }
 
 #terminal::-webkit-scrollbar-track {
-  background: var(--ibm-terminal-surface);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 #terminal::-webkit-scrollbar-thumb {
-  background: #000000;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
 #terminal::-webkit-scrollbar-thumb:hover {
-  background: #111111;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 #terminal .input {
