@@ -13,12 +13,17 @@
       <a href="/projects">Projects</a>
       <a href="/education">Education</a>
       <a href="/about">About</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+        <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+        <span class="theme-toggle__text">Dark</span>
+      </button>
     </nav>
   </header>
   <main id="resume-container"></main>
     <footer>
       <p>&copy; 2024 Chad Lindemood</p>
     </footer>
+    <script src="/static/theme.js"></script>
     <script type="module">
       import {loadResume} from '/static/resume-data.js';
       loadResume();
