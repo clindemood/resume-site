@@ -127,6 +127,27 @@ main.centered {
   font-family: monospace;
   border: 1px solid var(--ibm-terminal-border);
   color: var(--ibm-terminal-text);
+  scrollbar-color: var(--ibm-terminal-secondary) var(--ibm-terminal-surface);
+}
+
+#terminal::-webkit-scrollbar {
+  width: 10px;
+}
+
+#terminal::-webkit-scrollbar-track {
+  background: var(--ibm-terminal-surface);
+  border-left: 1px solid rgba(0, 255, 0, 0.15);
+}
+
+#terminal::-webkit-scrollbar-thumb {
+  background: var(--ibm-terminal-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--ibm-terminal-border);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+}
+
+#terminal::-webkit-scrollbar-thumb:hover {
+  background: var(--ibm-terminal-text);
 }
 
 #terminal .input {
