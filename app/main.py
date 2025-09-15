@@ -129,16 +129,23 @@ else:  # in-memory store
     USE_REDIS = False
 
 
-def prune_sessions(now: float | None = None) -> None:
-    """Remove expired sessions from the in-memory store."""
+def prune_sessions(now: float | None = None, ttl: int | None = None) -> None:
+    """Remove expired sessions from the in-memory store.
+
+    ``ttl`` allows tests to override the configured ``SESSION_TTL`` while still
+    ensuring that session expiration honours the intended lifetime.
+    """
 
     if USE_REDIS:  # Redis handles TTL internally
         return
+
     now = now or time.time()
+    ttl = SESSION_TTL if ttl is None else ttl
+
     expired = [
         sid
         for sid, state in list(sessions.items())
-        if now - state.get("_ts", now) > SESSION_TTL
+        if now - state.get("_ts", now) >= ttl
     ]
     for sid in expired:
         del sessions[sid]
@@ -148,7 +155,7 @@ async def session_cleanup_loop() -> None:
     """Background task to periodically prune expired sessions."""
 
     while True:  # pragma: no cover - simple infinite loop
-        await asyncio.sleep(SESSION_TTL)
+        await asyncio.sleep(min(SESSION_TTL, 300))
         prune_sessions()
 
 
