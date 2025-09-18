@@ -200,7 +200,9 @@ main.centered {
   padding: 10px;
   border: 1px solid var(--ibm-terminal-border);
   border-radius: 4px;
-  width: 600px;
+  width: min(100%, 600px);
+  margin: 0 auto;
+  box-sizing: border-box;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
@@ -424,6 +426,10 @@ footer {
 
   #command {
     min-width: 0;
+  }
+
+  #terminal {
+    height: 55vh;
   }
 }
 
