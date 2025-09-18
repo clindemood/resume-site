@@ -112,8 +112,9 @@ input.addEventListener('keydown', e => {
 
 // Delegate clicks on the hotkey buttons to send predefined commands
 document.getElementById('hotkeys').addEventListener('click', e => {
-  if (e.target.dataset.cmd) {
-    sendCommand(e.target.dataset.cmd);
+  const target = e.target instanceof Element ? e.target.closest('button') : null;
+  if (target && target.dataset.cmd) {
+    sendCommand(target.dataset.cmd);
   }
 });
 

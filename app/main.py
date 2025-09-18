@@ -522,8 +522,9 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         return {"text": ""}
 
     parts = shlex.split(cmd)
-    command = parts[0]
+    command = parts[0].lower()
     args = parts[1:]
+    args_lower = [a.lower() for a in args]
 
     if state.get("mode") == "secret":
         return handle_secret_game(state, command, args)
@@ -538,10 +539,15 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     # Basic navigation -----------------------------------------------------
     if command == "help":
-        return {"text": HELP_TEXT if not args else COMMAND_HELP.get(args[0], "No help available.")}
+        return {
+            "text": HELP_TEXT
+            if not args
+            else COMMAND_HELP.get(args_lower[0], "No help available.")
+        }
 
     if command == "open" and args:
-        if args[0] == "secret":
+        section = args_lower[0]
+        if section == "secret":
             state["mode"] = "secret"
             state["secret"] = {
                 "defeated": [],
@@ -558,12 +564,11 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
                     "inspect with 'look <thing>' ('l'), and leave anytime with 'exit' ('q')."
                 )
             }
-        section = args[0]
-        expand = "--expand" in args
+        expand = "--expand" in args_lower
         page = 1
-        if "--page" in args:
+        if "--page" in args_lower:
             try:
-                idx = args.index("--page")
+                idx = args_lower.index("--page")
                 page = int(args[idx + 1])
             except (ValueError, IndexError):
                 pass
@@ -598,10 +603,10 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     # Discovery -----------------------------------------------------------
     if command == "search" and args:
         section = None
-        if "--in" in args:
+        if "--in" in args_lower:
             try:
-                idx = args.index("--in")
-                section = args[idx + 1]
+                idx = args_lower.index("--in")
+                section = args_lower[idx + 1]
             except IndexError:
                 pass
         query = args[0]
@@ -612,8 +617,8 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     if command == "filter" and args:
         # Very small filter implementation: filter <section> field=value
-        sec = args[0] if args[0] in RESUME else state.get("current_section")
-        exprs = args[1:] if sec == args[0] else args
+        sec = args_lower[0] if args_lower[0] in RESUME else state.get("current_section")
+        exprs = args[1:] if args_lower[0] in RESUME else args
         items = RESUME.get(sec, [])
         if not isinstance(items, list):
             return {"text": "Unknown section."}
@@ -632,10 +637,10 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     if command == "timeline":
         sec = "experience"
-        if "--section" in args:
+        if "--section" in args_lower:
             try:
-                idx = args.index("--section")
-                sec = args[idx + 1]
+                idx = args_lower.index("--section")
+                sec = args_lower[idx + 1]
             except IndexError:
                 pass
         items = RESUME.get(sec, [])
@@ -648,11 +653,11 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         return {"text": "".join(lines)}
 
     if command == "certifications":
-        expand = "--expand" in args
+        expand = "--expand" in args_lower
         page = 1
-        if "--page" in args:
+        if "--page" in args_lower:
             try:
-                idx = args.index("--page")
+                idx = args_lower.index("--page")
                 page = int(args[idx + 1])
             except (ValueError, IndexError):
                 pass
@@ -663,22 +668,25 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
     if command == "skills":
         level = None
         tags: List[str] | None = None
-        if "--level" in args:
+        if "--level" in args_lower:
             try:
-                level = args[args.index("--level") + 1]
+                level = args[args_lower.index("--level") + 1].lower()
             except IndexError:
                 pass
-        if "--tag" in args:
+        if "--tag" in args_lower:
             try:
-                tags = [t.strip() for t in args[args.index("--tag") + 1].split(",")]
+                tags = [
+                    t.strip().lower()
+                    for t in args[args_lower.index("--tag") + 1].split(",")
+                ]
             except IndexError:
                 pass
         skills = RESUME.get("skills", [])
         out = []
         for s in skills:
-            if level and s.get("level") != level:
+            if level and s.get("level", "").lower() != level:
                 continue
-            if tags and not set(tags) & set(s.get("tags", [])):
+            if tags and not {t.lower() for t in s.get("tags", [])} & set(tags):
                 continue
             out.append(f"{s['name']} ({s.get('level')})")
         return {"text": " • ".join(out) if out else "No skills match."}
@@ -693,7 +701,7 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
         }
 
     if command == "copy" and args:
-        field = args[0]
+        field = args_lower[0]
         o = RESUME.get("overview", {})
         value = o.get(field)
         if not value:
@@ -705,36 +713,36 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     if command == "download":
         filename = "resume.txt"
-        if "--filename" in args:
+        if "--filename" in args_lower:
             try:
-                filename = args[args.index("--filename") + 1]
+                filename = args[args_lower.index("--filename") + 1]
             except IndexError:
                 pass
         return {"text": f"Download started: {filename}"}
 
     if command == "versions":
         versions = RESUME.get("versions", [])
-        if "--list" in args or not args:
+        if "--list" in args_lower or not args:
             return {"text": " • ".join(versions) + f" • last_updated: {RESUME['meta']['last_updated']}"}
-        if "--diff" in args:
+        if "--diff" in args_lower:
             return {"text": "Diff not implemented."}
 
     if command == "tags":
         tags = state.setdefault("tags", {})
-        if "--list" in args:
+        if "--list" in args_lower:
             listing = [f"{k}: {', '.join(v)}" for k, v in tags.items()]
             return {"text": "\n".join(listing) if listing else "No tags."}
-        if "--add" in args:
+        if "--add" in args_lower:
             try:
-                idx = args.index("--add")
+                idx = args_lower.index("--add")
                 id_, tag = args[idx + 1], args[idx + 2]
                 tags.setdefault(id_, []).append(tag)
                 return {"text": f"Tag '{tag}' added to {id_}."}
             except IndexError:
                 return {"text": "Usage: tags --add <id> <tag>"}
-        if "--remove" in args:
+        if "--remove" in args_lower:
             try:
-                idx = args.index("--remove")
+                idx = args_lower.index("--remove")
                 id_, tag = args[idx + 1], args[idx + 2]
                 if tag in tags.get(id_, []):
                     tags[id_].remove(tag)
@@ -745,17 +753,17 @@ def handle_command(state: Dict[str, Any], cmd: str) -> Dict[str, Any]:
 
     if command == "notes":
         notes = state.setdefault("notes", {})
-        if "--add" in args:
+        if "--add" in args_lower:
             try:
-                idx = args.index("--add")
+                idx = args_lower.index("--add")
                 id_, text = args[idx + 1], args[idx + 2]
                 notes.setdefault(id_, []).append(text)
                 return {"text": "Note added."}
             except IndexError:
                 return {"text": "Usage: notes --add <id> 'text'"}
-        if "--show" in args:
+        if "--show" in args_lower:
             try:
-                idx = args.index("--show")
+                idx = args_lower.index("--show")
                 id_ = args[idx + 1]
                 return {"text": " | ".join(notes.get(id_, [])) or "No notes."}
             except IndexError:
