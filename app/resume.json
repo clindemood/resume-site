@@ -218,26 +218,42 @@
     "location": "Canal Fulton, OH",
     "name": "Chad Lindemood",
     "summary": "IT professional focused on building secure, reliable, and scalable systems across cloud, network, and endpoint environments. Experienced in tackling complex technical challenges, leading projects from start to finish, and strengthening infrastructure through hands-on expertise and industry certifications.",
-    "title": "Tier 2 Escalations Technician",
-    "web": "https://chadlindemood.com"
+    "title": "Tier 2 Escalations Technician"
   },
   "projects": [
     {
       "bullets": [
-        "Created an interactive lab using AI tools to build a resume-focused website.",
-        "Containerized the application with Docker and orchestrated it using Kubernetes.",
-        "Deployed the site to AWS for public access and scalability testing.",
-        "This is that website!"
+        "Researched component compatibility and sourced an AMD Athlon processor, ATX motherboard, and 3dfx graphics accelerator to balance price and performance.",
+        "Assembled the system from bare parts, setting jumpers, routing IDE ribbon cables, and installing cooling to ensure stable airflow inside the beige tower case.",
+        "Installed Windows 98 SE, flashed the BIOS, and tuned drivers and IRQ assignments for smooth gaming and multimedia playback."
+      ],
+      "id": 8,
+      "name": "Built First PC",
+      "role": "Builder",
+      "start": "1999-10",
+      "tech": [
+        "AMD Athlon",
+        "ATX Hardware",
+        "Windows 98 SE",
+        "3dfx Graphics"
+      ]
+    },
+    {
+      "bullets": [
+        "Built an interactive resume experience with FastAPI, vanilla JavaScript, and responsive CSS.",
+        "Leveraged Azure OpenAI services and Python automation to rapidly iterate on content and features.",
+        "Packaged the site with Docker and deployed to cloud platforms for hands-on CI/CD practice.",
+        "You're exploring the project right now—this site is the lab deliverable."
       ],
       "id": 7,
       "name": "Resume Creation Lab",
       "role": "Author",
       "start": "2025-09",
       "tech": [
-        "AI tools",
-        "Docker",
-        "Kubernetes",
-        "AWS"
+        "Azure OpenAI",
+        "FastAPI",
+        "Python",
+        "Docker"
       ]
     },
     {
