@@ -4,6 +4,7 @@ async function fetchResume() {
 }
 
 function stripScheme(url) {
+  if (!url) return '';
   return url.replace(/^https?:\/\/(www\.)?/, '');
 }
 
@@ -83,15 +84,27 @@ export async function loadResume() {
   main.appendChild(h1);
 
   const contact = document.createElement('p');
-  const parts = [
-    r.overview.location,
-    `<a href="mailto:${r.overview.email}">${r.overview.email}</a>`,
-    `<a href="${r.overview.web}" target="_blank">${stripScheme(r.overview.web)}</a>`,
-    `<a href="${r.overview.linkedin}" target="_blank">LinkedIn</a>`,
-    `<a href="${r.overview.github}" target="_blank">GitHub</a>`
-  ];
-  contact.innerHTML = parts.join(' | ');
-  main.appendChild(contact);
+  const parts = [];
+  if (r.overview.location) {
+    parts.push(r.overview.location);
+  }
+  if (r.overview.email) {
+    parts.push(`<a href="mailto:${r.overview.email}">${r.overview.email}</a>`);
+  }
+  if (r.overview.web) {
+    const web = stripScheme(r.overview.web);
+    parts.push(`<a href="${r.overview.web}" target="_blank">${web || r.overview.web}</a>`);
+  }
+  if (r.overview.linkedin) {
+    parts.push(`<a href="${r.overview.linkedin}" target="_blank">LinkedIn</a>`);
+  }
+  if (r.overview.github) {
+    parts.push(`<a href="${r.overview.github}" target="_blank">GitHub</a>`);
+  }
+  if (parts.length) {
+    contact.innerHTML = parts.join(' | ');
+    main.appendChild(contact);
+  }
 
   const expH2 = document.createElement('h2');
   expH2.textContent = 'Professional Experience';
