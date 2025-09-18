@@ -64,7 +64,7 @@
       "id": 9,
       "issued": "2022-08",
       "issuer": "PeopleCert",
-      "name": "ITIL® Foundation 4 Certificate in IT Service Management"
+      "name": "ITIL\u00ae Foundation 4 Certificate in IT Service Management"
     }
   ],
   "education": [
@@ -223,27 +223,10 @@
   "projects": [
     {
       "bullets": [
-        "Researched component compatibility and sourced an AMD Athlon processor, ATX motherboard, and 3dfx graphics accelerator to balance price and performance.",
-        "Assembled the system from bare parts, setting jumpers, routing IDE ribbon cables, and installing cooling to ensure stable airflow inside the beige tower case.",
-        "Installed Windows 98 SE, flashed the BIOS, and tuned drivers and IRQ assignments for smooth gaming and multimedia playback."
-      ],
-      "id": 8,
-      "name": "Built First PC",
-      "role": "Builder",
-      "start": "1999-10",
-      "tech": [
-        "AMD Athlon",
-        "ATX Hardware",
-        "Windows 98 SE",
-        "3dfx Graphics"
-      ]
-    },
-    {
-      "bullets": [
         "Built an interactive resume experience with FastAPI, vanilla JavaScript, and responsive CSS.",
         "Leveraged Azure OpenAI services and Python automation to rapidly iterate on content and features.",
         "Packaged the site with Docker and deployed to cloud platforms for hands-on CI/CD practice.",
-        "You're exploring the project right now—this site is the lab deliverable."
+        "You're exploring the project right now\u2014this site is the lab deliverable."
       ],
       "id": 7,
       "name": "Resume Creation Lab",
@@ -337,6 +320,22 @@
         "DHCP",
         "NAT",
         "ACLs"
+      ]
+    },
+    {
+      "bullets": [
+        "Researched and selected compatible components for a custom gaming PC build.",
+        "Assembled the system, installed Windows 98 SE, and explored graphics drivers and early 3D titles."
+      ],
+      "id": 8,
+      "name": "Built First PC",
+      "role": "Builder",
+      "start": "1999-10",
+      "tech": [
+        "AMD Athlon",
+        "ATX Hardware",
+        "Windows 98 SE",
+        "3dfx Graphics"
       ]
     }
   ],
