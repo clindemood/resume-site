@@ -29,6 +29,7 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-text-size-adjust: 100%;
 }
 
 body.light-theme {
@@ -134,8 +135,7 @@ h4 {
 
 main {
   flex: 1;
-  width: 90%;
-  max-width: 900px;
+  width: min(90%, 900px);
   margin: 2rem auto;
   background: var(--card-bg);
   color: inherit;
@@ -143,6 +143,7 @@ main {
   border-radius: 8px;
   box-shadow: var(--card-shadow);
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 a {
@@ -165,6 +166,9 @@ main.centered {
   background: none;
   box-shadow: none;
   margin: 0.5rem auto;
+  width: 100%;
+  padding: 1rem 0.5rem 2rem;
+  overflow-x: auto;
 }
 
 .cli-title {
@@ -196,7 +200,7 @@ main.centered {
   padding: 10px;
   border: 1px solid var(--ibm-terminal-border);
   border-radius: 4px;
-  max-width: 600px;
+  width: 600px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
@@ -209,6 +213,10 @@ main.centered {
 
 #hotkeys {
   margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
 #terminal {
@@ -221,6 +229,7 @@ main.centered {
   border: 1px solid var(--ibm-terminal-border);
   color: var(--ibm-terminal-text);
   scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.05);
+  overflow-x: auto;
 }
 
 #terminal::-webkit-scrollbar {
@@ -303,10 +312,13 @@ main.centered {
   border: none;
   outline: none;
   font-family: monospace;
+  font-size: 16px;
+  line-height: 1.4;
+  padding: 4px 6px;
 }
 
 #game-container button {
-  margin-right: 5px;
+  margin: 0;
   background: var(--ibm-terminal-surface);
   color: var(--ibm-terminal-secondary);
   border: 1px solid var(--ibm-terminal-border);
@@ -347,5 +359,71 @@ footer {
   text-align: center;
   padding: 1rem 0;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (max-width: 900px) {
+  header {
+    padding: 0.5rem 1rem;
+  }
+
+  nav {
+    gap: 0.5rem;
+  }
+
+  nav a,
+  .theme-toggle {
+    padding: 0.4rem 0.8rem;
+  }
+
+  main {
+    width: 100%;
+    margin: 1.5rem auto;
+    padding: 1.5rem 1rem;
+  }
+
+  .cli-title {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .headshot {
+    width: min(260px, 80vw);
+    height: auto;
+  }
+}
+
+@media (max-width: 650px) {
+  nav {
+    flex-direction: column;
+  }
+
+  nav a,
+  .theme-toggle {
+    width: 100%;
+    text-align: center;
+  }
+
+  main {
+    margin: 1rem auto;
+    padding: 1.25rem 0.75rem;
+  }
+
+  main.centered {
+    padding: 0.75rem 0.25rem 1.5rem;
+  }
+
+  #command-form {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  #command {
+    min-width: 0;
+  }
 }
 
