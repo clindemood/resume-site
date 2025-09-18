@@ -871,16 +871,12 @@ def start() -> Dict[str, Any]:
     """Start a new CLI session."""
     session_id = str(uuid.uuid4())
     sessions[session_id] = {"_ts": time.time()}
-    ascii_art = "\n".join(
-        [
-            "  ____                                _            ",
-            " |  _ \\ ___  ___ _   _ _ __ ___   ___| |_ ___ _ __ ",
-            " | |_) / _ \\ / __| | | | '_ ` _ \\ / _ \\ __/ _ \\ '__|",
-            " |  _ < (_) | (__| |_| | | | | | |  __/ ||  __/ |   ",
-            " |_| \\_\\___/ \\___|\\__,_|_| |_| |_|\\___|\\__\\___|_|   ",
-            "                                              ",
-            "    Welcome to the Resume Terminal    ",
-        ]
+    ascii_art = (
+        "Welcome to the interactive resume terminal!\n"
+        "This website showcases my experience, projects, and skills in a hands-on format\n"
+        "so you can explore my background like you would navigate a real command line.\n"
+        "I built it to offer a more engaging alternative to a static resume and to share\n"
+        "the curiosity and craftsmanship I bring to my work."
     )
     welcome = (
         "Welcome to the interactive resume terminal.\n"
