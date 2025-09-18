@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --body-bg: #f5f7fa;
@@ -29,6 +33,12 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 body.light-theme {
@@ -134,12 +144,11 @@ h4 {
 
 main {
   flex: 1;
-  width: 90%;
-  max-width: 900px;
-  margin: 2rem auto;
+  width: min(90vw, 900px);
+  margin: clamp(1.5rem, 4vw, 3rem) auto;
   background: var(--card-bg);
   color: inherit;
-  padding: 2rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: 8px;
   box-shadow: var(--card-shadow);
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
@@ -157,6 +166,14 @@ a:focus {
   text-decoration: underline;
 }
 
+main ul {
+  padding-left: 1.25rem;
+}
+
+main li {
+  margin-bottom: 0.35rem;
+}
+
 main.centered {
   display: flex;
   flex-direction: column;
@@ -165,6 +182,8 @@ main.centered {
   background: none;
   box-shadow: none;
   margin: 0.5rem auto;
+  width: min(92vw, 700px);
+  padding: clamp(1rem, 4vw, 2rem);
 }
 
 .cli-title {
@@ -196,6 +215,7 @@ main.centered {
   padding: 10px;
   border: 1px solid var(--ibm-terminal-border);
   border-radius: 4px;
+  width: 100%;
   max-width: 600px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
@@ -209,6 +229,10 @@ main.centered {
 
 #hotkeys {
   margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
 #terminal {
@@ -288,12 +312,14 @@ main.centered {
 
 #command-form {
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 10px 0;
 }
 
 #command-form span {
   color: var(--ibm-terminal-secondary);
-  margin-right: 5px;
+  margin-right: 0;
 }
 
 #command {
@@ -306,7 +332,7 @@ main.centered {
 }
 
 #game-container button {
-  margin-right: 5px;
+  margin: 0;
   background: var(--ibm-terminal-surface);
   color: var(--ibm-terminal-secondary);
   border: 1px solid var(--ibm-terminal-border);
@@ -325,7 +351,8 @@ main.centered {
 .about-content {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .about-text {
@@ -333,12 +360,125 @@ main.centered {
 }
 
 .headshot {
-  width: 400px;
-  height: 400px;
+  width: min(100%, 320px);
   border: 1px solid var(--image-border);
   object-fit: cover;
   flex-shrink: 0;
+  border-radius: 6px;
   margin-top: 1rem;
+  aspect-ratio: 1 / 1;
+}
+
+@media (max-width: 900px) {
+  header {
+    padding: 0.75rem 0;
+  }
+
+  nav {
+    width: min(100%, 960px);
+    margin: 0 auto;
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+
+  main {
+    width: min(92vw, 900px);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    margin: clamp(1.25rem, 4vw, 2.5rem) auto;
+  }
+}
+
+@media (max-width: 700px) {
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  nav a {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+
+  .theme-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  main {
+    width: min(94vw, 700px);
+    padding: clamp(1rem, 5vw, 1.75rem);
+    margin: 1.5rem auto;
+  }
+
+  main.centered {
+    width: min(94vw, 640px);
+  }
+
+  #game-container {
+    max-width: 100%;
+  }
+
+  #terminal {
+    height: 50vh;
+  }
+
+  #command-form {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  #command-form span {
+    margin-right: 0;
+  }
+
+  #command {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 0.5rem;
+  }
+
+  #game-container button {
+    flex: 1 1 45%;
+    min-width: 140px;
+  }
+
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .about-text {
+    width: 100%;
+  }
+
+  .headshot {
+    width: min(70vw, 260px);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  nav {
+    gap: 0.5rem;
+  }
+
+  #terminal {
+    height: 45vh;
+  }
+
+  #game-container button {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  footer {
+    padding: 0.75rem 0.5rem;
+  }
 }
 
 footer {
